@@ -1,0 +1,27 @@
+/* Reset CSS */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;       /*1rem=10px*/
+    line-height: 1.6rem;    /*16px*/
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+@keyframes modalFadeIn{
+
+    from{
+        opacity: 0;
+        transform: translateY(-120px);
+    }
+
+    to{ 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
