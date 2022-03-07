@@ -5,9 +5,9 @@ import styled from "styled-components";
 /*Chat Apps Styles*/
 
 export const StyledWrapper = styled.div`
-  /* height: calc(100vh - 130px); */
+  height: calc(100vh - 50px);
   margin-top: 50px;
-  padding-top: 5px;
+  /* padding-top: 5px; */
   background-color: #eee;
   /* min-height: 100vh; */
   /* overflow-y: scroll; */
@@ -35,9 +35,12 @@ export const StyledWrapper = styled.div`
   }
   .gx-chat-module {
     position: relative;
+    height: 100%;
   }
   .gx-chat-module-box {
-    display: -webkit-flex;
+    height: 100%;
+    display: flex;
+    /* display: -webkit-flex;
     display: -ms-flexbox;
     display: -ms-flex;
     display: flex;
@@ -49,7 +52,7 @@ export const StyledWrapper = styled.div`
     flex-wrap: nowrap;
     -webkit-flex: 1 1 auto;
     -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
+    flex: 1 1 auto; */
     background-color: #fafafa;
     position: relative;
     width: 100%;
@@ -70,6 +73,9 @@ export const StyledWrapper = styled.div`
     flex: 0 1 315px;
     min-width: 315px;
     border-right: solid 1px #e8e8e8;
+  }
+  .gx-d-none {
+    display: block;
   }
   .gx-chat-sidenav-header {
     display: -webkit-flex;
@@ -123,15 +129,29 @@ export const StyledWrapper = styled.div`
     cursor: pointer;
   }
   .gx-chat-sidenav-scroll {
-    height: calc(100vh - 295px) !important;
+    height: calc(100vh - 50px) !important;
     .group-action {
       border-bottom: 1px solid #ddd;
       .action-item {
         padding: 5px 10px;
         cursor: pointer;
       }
+      .active-action-item,
       .action-item:hover {
         background-color: #eee;
+      }
+    }
+    .action-content {
+      margin-top: 10px;
+      &-group {
+        &-item {
+          cursor: pointer;
+          padding: 5px 10px;
+          border-bottom: 1px solid #ddd;
+        }
+        &-item:hover {
+          background-color: var(--teal);
+        }
       }
     }
   }
@@ -151,7 +171,7 @@ export const StyledWrapper = styled.div`
   }
   .gx-chat-sidenav-scroll-tab-1,
   .gx-chat-sidenav-scroll-tab-2 {
-    height: calc(100vh - 320px) !important;
+    height: calc(100vh - 200px) !important;
   }
   .framed-layout .gx-chat-sidenav-scroll-tab-1,
   .framed-layout .gx-chat-sidenav-scroll-tab-2 {
@@ -400,7 +420,7 @@ export const StyledWrapper = styled.div`
     z-index: 2;
   }
   .gx-chat-main {
-    display: -webkit-flex;
+    /* display: -webkit-flex;
     display: -ms-flexbox;
     display: -ms-flex;
     display: flex;
@@ -409,7 +429,7 @@ export const StyledWrapper = styled.div`
     flex-direction: column;
     -webkit-flex-wrap: nowrap;
     -ms-flex-wrap: nowrap;
-    flex-wrap: nowrap;
+    flex-wrap: nowrap; */
   }
   .gx-chat-main-header {
     display: -webkit-flex;

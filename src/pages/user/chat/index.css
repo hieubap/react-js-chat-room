@@ -91,7 +91,7 @@
     cursor: pointer;
 }
 .gx-chat-sidenav-scroll {
-    height: calc(100vh - 295px) !important;
+    height: calc(100vh - 200px) !important;
 }
 .framed-layout .gx-chat-sidenav-scroll {
     height: calc(100vh - 295px + 2 * 20px) !important;

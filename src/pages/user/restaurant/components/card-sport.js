@@ -22,7 +22,7 @@ const CardSport = ({ item }) => {
             />
           </div>
           <div className="item-sport_content">
-            <div className="title">{item.title}</div>
+            <div className="title">{item.name}</div>
             <div className="address">{item.address || "123 Lê thanh Nghị"}</div>
             <div className="description">
               <i className="icon fas fa-star"></i>

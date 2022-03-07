@@ -1,3 +1,4 @@
+import { getImg } from "@src/utils";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -18,14 +19,14 @@ const Product = ({ data, addProduct, listAdd }) => {
         id={data.id}
         class="home-product-item"
       >
-        <img src={data.img} class="home-product-item__img" />
+        <img src={getImg(data.avatar)} class="home-product-item__img" />
         <div class="home-product-item__name"> {data.name} </div>
         <div class="home-product-item__price">
-          <span class="home-product-item__price-old">
-            {data.oldPrice?.formatPrice()}đ
-          </span>
+          {/* <span class="home-product-item__price-old">
+            {data.price?.formatPrice()}đ
+          </span> */}
           <span class="home-product-item__price-current">
-            {data.newPrice?.formatPrice()}đ
+            {data.price?.formatPrice()}đ
           </span>
         </div>
         <div class="home-product-item__action">
@@ -40,11 +41,11 @@ const Product = ({ data, addProduct, listAdd }) => {
             <i class="home-product-item__star--gold fas fa-star"></i>
             <i class="fas fa-star"></i>
           </div>
-          <span class="home-product-item__sold">
+          {/* <span class="home-product-item__sold">
             {data.numberSell + " đã bán"}
-          </span>
+          </span> */}
         </div>
-        <div class="home-product-item__origin">
+        {/* <div class="home-product-item__origin">
           <span class="home-product-item__origin-name">
             {data.manufactureCountry}
           </span>
@@ -56,14 +57,14 @@ const Product = ({ data, addProduct, listAdd }) => {
           >
             {isAdd ? "Đã thêm" : "Mua ngay"}
           </span>
-        </div>
+        </div> */}
         <div class="product-favourite">
           <i class="fas fa-check"></i>
           <span> Yêu thích </span>
         </div>
         <div class="product-sale-off">
           <span class="product-sale-off__percent"> {data.per}% </span>
-          <span class="product-sale-off__label"> GIẢM </span>
+          {/* <span class="product-sale-off__label"> GIẢM </span> */}
         </div>
       </Link>
     </div>

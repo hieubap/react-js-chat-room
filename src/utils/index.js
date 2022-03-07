@@ -21,3 +21,9 @@ export const getImg = (avatar) => {
     ? `${clientUtils.serverApi}/files/${avatar}`
     : "https://media-cdn.tripadvisor.com/media/photo-s/15/c5/84/65/khong-gian-nha-hang-vu.jpg";
 };
+
+export const getIdFromUrl = () => {
+  const splitArr = window.location.pathname?.split("/");
+  const id = parseInt(splitArr[splitArr.length - 1]);
+  return isNaN(id) ? null : id;
+};

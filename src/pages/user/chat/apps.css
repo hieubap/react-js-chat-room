@@ -491,7 +491,7 @@
     z-index: 9;
 }
 .gx-module-sidenav .gx-chat-sidenav-main {
-    max-width: 300px;
+    /* max-width: 300px; */
     min-width: 300px;
     width: 90%;
 }

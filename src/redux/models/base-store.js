@@ -3,6 +3,7 @@ import { message } from "antd";
 export default ({
   initState = {},
   customEffect = () => ({}),
+  ignoreCache,
 
   // BẮT BUỘC
   fetchProvider, // phải là provider kết hợp từ base-provider
@@ -18,11 +19,14 @@ export default ({
     _dataFilter: {},
     _dataSearch: {}, // chứa các param khi search api
     ...initState,
-    ...dataCache.read(`_store_${storeName}`),
+    ...(ignoreCache ? {} : dataCache.read(`_store_${storeName}`)),
   },
   reducers: {
     updateData(state, payload = {}) {
-      dataCache.save(`_store_${storeName}`, { ...state, ...payload });
+      if (!ignoreCache) {
+        dataCache.save(`_store_${storeName}`, { ...state, ...payload });
+      }
+
       return { ...state, ...payload };
     },
   },

@@ -1,19 +1,21 @@
 import React from "react";
 import { data } from "../../data";
 import Product from "../product";
+import { useSelector } from "react-redux";
 
 const ListFood = ({ display }) => {
+  const { _listData } = useSelector((state) => state.food);
   return (
     <div className={display ? "" : "tab-not-visible"}>
       <div className="home-product">
         <div className="row sm-gutter">
-          {data.map((item, idx) => (
+          {_listData.map((item, idx) => (
             <Product key={idx} data={item} />
           ))}
         </div>
       </div>
 
-      <ul className="pagination home-product__pagination">
+      {/* <ul className="pagination home-product__pagination">
         <li className="pagination-item">
           <a href="" className="pagination-item__link">
             <i className="pagination-item__icon fas fa-angle-left"></i>
@@ -60,7 +62,7 @@ const ListFood = ({ display }) => {
             <i className="pagination-item__icon fas fa-angle-right"></i>
           </a>
         </li>
-      </ul>
+      </ul> */}
     </div>
   );
 };

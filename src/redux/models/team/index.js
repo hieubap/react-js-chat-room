@@ -6,5 +6,14 @@ export default {
     fetchProvider,
     storeName: "team",
     title: "Nhóm",
+    customEffect: ({ dispatch }) => ({
+      addUser: (dto, state) => {
+        return new Promise((resolve, reject) => {
+          fetchProvider.addUser(dto).then((res) => {
+            resolve(res);
+          });
+        });
+      },
+    }),
   }),
 };

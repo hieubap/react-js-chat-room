@@ -1,10 +1,10 @@
-import { Avatar, Button, Drawer, Input, Tabs } from "antd";
+import { Avatar, Button, Drawer, Input, message, Popconfirm, Tabs } from "antd";
 import CircularProgress from "@core/components/CircularProgress";
 import CustomScrollbars from "@core/components/CustomScrollbar";
 import IntlMessages from "@core/components/IntlMessages";
 import Moment from "moment";
-import React, { Component, useState } from "react";
-import { connect } from "react-redux";
+import React, { Component, useEffect, useState } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { getImg } from "@utils";
 import ChatUserList from "./components/ChatUserList";
 import ContactList from "./components/ContactList";
@@ -12,6 +12,8 @@ import Conversation from "./components/Conversation";
 import users from "./data/chatUsers";
 import conversationList from "./data/conversationList";
 import { StyledWrapper } from "./styled";
+import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
+import InputTimeout from "@src/components/InputTimeout";
 // import "./index.css";
 
 const TabPane = Tabs.TabPane;
@@ -26,7 +28,7 @@ const Chat = (props) => {
     userState: 1,
     searchChatUser: "",
     contactList: users.filter((user) => !user.recent),
-    selectedUser: null,
+    selectedUser: {},
     message: "",
     chatUsers: users.filter((user) => user.recent),
     conversationList: conversationList,
@@ -35,6 +37,27 @@ const Chat = (props) => {
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
+
+  const {
+    chat: { connect, sendMessage },
+    team: { _createOrEdit: createTeam, _getList: getTeam, addUser },
+    user: { _getList: _getListUser },
+  } = useDispatch();
+
+  const { _listData: listTeam } = useSelector((state) => state.team);
+  const { auth } = useSelector((state) => state.auth);
+  const {
+    idTeam,
+    selectTeam,
+    _listData: listMessage,
+  } = useSelector((state) => state.message);
+  const { _listData: listUser } = useSelector((state) => state.user);
+
+  console.log(listMessage, "listmessage");
+
+  useEffect(() => {
+    connect();
+  }, []);
 
   const filterContact = (userName) => {
     if (userName === "") {
@@ -59,8 +82,8 @@ const Chat = (props) => {
   };
 
   const Communication = () => {
-    const { message, selectedUser, conversation } = state;
-    const { conversationData } = conversation;
+    const { message, selectedUser = {}, conversation } = state;
+    // const { conversationData } = conversation;
     return (
       <div className="gx-chat-main">
         <div className="gx-chat-main-header">
@@ -73,13 +96,13 @@ const Chat = (props) => {
           <div className="gx-chat-main-header-info">
             <div className="gx-chat-avatar gx-mr-2">
               <div className="gx-status-pos">
-                <Avatar
+                {/* <Avatar
                   src={selectedUser.thumb}
                   className="gx-rounded-circle gx-size-60"
                   alt=""
-                />
+                /> */}
 
-                <span className={`gx-status gx-${selectedUser.status}`} />
+                {/* <span className={`gx-status gx-${selectedUser.status}`} /> */}
               </div>
             </div>
 
@@ -89,7 +112,7 @@ const Chat = (props) => {
 
         <CustomScrollbars className="gx-chat-list-scroll">
           <Conversation
-            conversationData={conversationData}
+            conversationData={listMessage}
             selectedUser={selectedUser}
           />
         </CustomScrollbars>
@@ -111,10 +134,11 @@ const Chat = (props) => {
                 />
               </div>
             </div>
-            <i
+            <SendOutlinedIcon
               className="gx-icon-btn icon icon-sent"
               onClick={submitComment.bind(this)}
             />
+            {/* <i  /> */}
           </div>
         </div>
       </div>
@@ -130,6 +154,7 @@ const Chat = (props) => {
     },
     {
       name: "Thêm thành viên",
+      onClick: () => {},
     },
     {
       name: "Rời nhóm",
@@ -160,21 +185,93 @@ const Chat = (props) => {
             <div className="gx-user-name h4 gx-my-2">Robert Johnson</div>
           </div>
         </div> */}
-        <div className="gx-chat-sidenav-content">
-          <CustomScrollbars className="gx-chat-sidenav-scroll">
-            <div className="gx-p-4 group-action">
-              {actions.map((item, idx) => (
-                <div key={idx} className="action-item">{item.name}</div>
-              ))}
-            </div>
-          </CustomScrollbars>
-        </div>
+        {idTeam && (
+          <div className="gx-chat-sidenav-content">
+            <CustomScrollbars className="gx-chat-sidenav-scroll">
+              <div className="gx-p-4 group-action">
+                {actions.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className={`action-item ${
+                      idx === state.selectAction ? "active-action-item" : ""
+                    }`}
+                    onClick={() => {
+                      if (item.onClick) item.onClick();
+                      setState({ selectAction: idx });
+                    }}
+                  >
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+              <div className="action-content">
+                {state.selectAction === 2 && (
+                  <div>
+                    <InputTimeout
+                      placeholder="Tìm tên user"
+                      onChange={(e) => {
+                        _getListUser({ name: e });
+                      }}
+                    />
+                    <div className="action-content-group">
+                      {listUser?.map((item) => (
+                        <div
+                          className="action-content-group-item"
+                          onClick={() => {
+                            addUser({
+                              id: idTeam,
+                              idNewUser: item.id,
+                            }).then((res) => {
+                              if (res && res.code === 0) {
+                                message.success("Thêm thành viên thành công");
+                              } else {
+                                message.error(res.message);
+                              }
+                            });
+                          }}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {state.selectAction === 1 && (
+                  <div>
+                    <div className="action-content-group">
+                      {selectTeam.listUser?.map((item) => (
+                        <div
+                          className="action-content-group-item"
+                          onClick={() => {
+                            addUser({
+                              id: idTeam,
+                              idNewUser: item.id,
+                            }).then((res) => {
+                              if (res && res.code === 0) {
+                                message.success("Thêm thành viên thành công");
+                              } else {
+                                message.error(res.message);
+                              }
+                            });
+                          }}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CustomScrollbars>
+          </div>
+        )}
       </div>
     );
   };
 
+  console.log(listTeam, selectTeam, "listTeam");
+
   const ChatUsers = () => {
-    console.log(props, "props");
     return (
       <div className="gx-chat-sidenav-main">
         <div className="gx-chat-sidenav-header">
@@ -190,7 +287,7 @@ const Chat = (props) => {
               <div className="gx-status-pos">
                 <Avatar
                   id="avatar-button"
-                  src={getImg(props.auth.avatar)}
+                  src={getImg(auth.avatar)}
                   // "https://via.placeholder.com/150x150"
                   className="gx-size-50"
                   alt=""
@@ -201,15 +298,29 @@ const Chat = (props) => {
 
             <div className="gx-module-user-info gx-flex-column gx-justify-content-center">
               <div className="gx-module-title">
-                <h5 className="gx-mb-0">{props.auth?.full_name}</h5>
+                <h5 className="gx-mb-0">{auth?.full_name}</h5>
               </div>
               <div className="gx-module-user-detail">
-                <span className="gx-text-grey gx-link">
-                  {props.auth?.email}
-                </span>
+                <span className="gx-text-grey gx-link">{auth?.email}</span>
               </div>
             </div>
           </div>
+
+          <Popconfirm
+            onConfirm={() => {
+              createTeam({
+                idLeader: auth?.userId,
+              }).then((res) => {
+                if (res && res.code === 0) {
+                  message.success("Tạo nhóm mới thành công");
+                  getTeam({ userId: auth?.userId });
+                }
+              });
+            }}
+            title="Bạn có chắc muốn tạo nhóm mới"
+          >
+            <Button type="primary">Tạo nhóm mới</Button>
+          </Popconfirm>
 
           <div className="gx-chat-search-wrapper">
             {/* <SearchBox
@@ -224,24 +335,21 @@ const Chat = (props) => {
         <div className="gx-chat-sidenav-content">
           {/*<AppBar position="public" className="no-shadow chat-tabs-header">*/}
           <Tabs className="gx-tabs-half" defaultActiveKey="1">
-            <TabPane
-              label={<IntlMessages id="chat.chatUser" />}
-              tab={<IntlMessages id="chat.chatUser" />}
-              key="1"
-            >
+            <TabPane label={"Nhóm của bạn"} tab={"Nhóm của bạn"} key="1">
               <CustomScrollbars className="gx-chat-sidenav-scroll-tab-1">
-                {state.chatUsers.length === 0 ? (
+                {/* {state.chatUsers.length === 0 ? (
                   <div className="gx-p-5">{state.userNotFound}</div>
                 ) : (
-                  <ChatUserList
-                    chatUsers={state.chatUsers}
-                    selectedSectionId={state.selectedSectionId}
-                    onSelectUser={onSelectUser.bind(this)}
-                  />
-                )}
+                  
+                )} */}
+                <ChatUserList
+                  chatUsers={listTeam}
+                  selectedSectionId={state.selectedSectionId}
+                  onSelectUser={onSelectUser}
+                />
               </CustomScrollbars>
             </TabPane>
-            <TabPane
+            {/* <TabPane
               label={<IntlMessages id="chat.contacts" />}
               tab={<IntlMessages id="chat.contacts" />}
               key="2"
@@ -257,7 +365,7 @@ const Chat = (props) => {
                   />
                 )}
               </CustomScrollbars>
-            </TabPane>
+            </TabPane> */}
           </Tabs>
         </div>
       </div>
@@ -278,37 +386,37 @@ const Chat = (props) => {
     setState({ selectedTabIndex: index });
   };
 
-  const onSelectUser = (user) => {
-    setState({
-      // loader: true,
-      selectedSectionId: user.id,
-      drawerState: props.drawerState,
-      selectedUser: user,
-      conversation: state.conversationList.find((data) => data.id === user.id),
-    });
+  console.log(state, "state...");
+
+  const onSelectUser = (selectTeam) => {
+    setState({ selectTeam });
+    // setState({
+    //   // loader: true,
+    //   selectedSectionId: user.id,
+    //   drawerState: props.drawerState,
+    //   selectedUser: user,
+    //   conversation: state.conversationList.find((data) => data.id === user.id),
+    // });
     // setState({ loader: false });
     // setTimeout(() => {
-
     // }, 500);
   };
 
   const showCommunication = () => {
     return (
       <div className="gx-chat-box">
-        {state.selectedUser === null ? (
+        {!idTeam ? (
           <div className="gx-comment-box">
             <div className="gx-fs-80">
               <i className="icon icon-chat gx-text-muted" />
             </div>
-            <h1 className="gx-text-muted">
-              {<IntlMessages id="chat.selectUserChat" />}
-            </h1>
+            <h1 className="gx-text-muted">Chọn chóm để bắt đầu trò chuyện</h1>
             <Button
               className="gx-d-block gx-d-lg-none"
               type="primary"
               onClick={onToggleDrawer.bind(this)}
             >
-              {<IntlMessages id="chat.selectContactChat" />}
+              Chọn nhóm
             </Button>
           </div>
         ) : (
@@ -320,28 +428,31 @@ const Chat = (props) => {
 
   const submitComment = () => {
     if (state.message !== "") {
-      const updatedConversation = state.conversation.conversationData.concat({
-        type: "sent",
-        message: state.message,
-        sentAt: Moment().format("hh:mm:ss A"),
-      });
-      setState({
-        conversation: {
-          ...state.conversation,
-          conversationData: updatedConversation,
-        },
-        message: "",
-        conversationList: state.conversationList.map((conversationData) => {
-          if (conversationData.id === state.conversation.id) {
-            return {
-              ...state.conversation,
-              conversationData: updatedConversation,
-            };
-          } else {
-            return conversationData;
-          }
-        }),
-      });
+      // const updatedConversation = state.conversation.conversationData.concat({
+      //   type: "sent",
+      //   message: state.message,
+      //   sentAt: Moment().format("hh:mm:ss A"),
+      // });
+
+      sendMessage({ content: state.message });
+      setState({ message: "" });
+      // setState({
+      //   conversation: {
+      //     ...state.conversation,
+      //     conversationData: updatedConversation,
+      //   },
+      //   message: "",
+      //   conversationList: state.conversationList.map((conversationData) => {
+      //     if (conversationData.id === state.conversation.id) {
+      //       return {
+      //         ...state.conversation,
+      //         conversationData: updatedConversation,
+      //       };
+      //     } else {
+      //       return conversationData;
+      //     }
+      //   }),
+      // });
     }
   };
 
@@ -400,6 +511,6 @@ const Chat = (props) => {
 };
 
 export default connect(
-  ({ auth: { auth } }) => ({ auth }),
-  ({ chat: { connect } }) => ({ connect })
+  ({}) => ({}),
+  ({}) => ({})
 )(Chat);

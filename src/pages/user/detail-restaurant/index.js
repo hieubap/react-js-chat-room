@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
+import { getIdFromUrl } from "@src/utils";
+import React, { useEffect, useState } from "react";
+import { connect, useDispatch } from "react-redux";
 import Comment from "./component/Comment";
 import GioHang from "./component/gio-hang";
 import Info from "./component/Info";
@@ -11,6 +12,15 @@ const Shop = ({ listAdd = [] }) => {
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
+
+  const {
+    food: { _getList: getListFood },
+  } = useDispatch();
+
+  useEffect(() => {
+    let idRes = getIdFromUrl();
+    if (idRes) getListFood({ idRes });
+  }, []);
 
   const tabs = [
     {
