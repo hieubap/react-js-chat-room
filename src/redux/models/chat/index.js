@@ -3,6 +3,7 @@ import roomProvider from "@data-access/team-provider";
 import SockJS from "sockjs-client";
 import Stomp from "stomp-websocket";
 import dataCache from "@utils/data-cache";
+import { UrlServer } from "@src/utils/client-utils";
 // import { message } from "antd";
 export default {
   state: {
@@ -22,7 +23,7 @@ export default {
       var chatRoomId = 1;
 
       function connect() {
-        socket = new SockJS("http://localhost:8082/ws");
+        socket = new SockJS(UrlServer() + "/ws");
         stompClient = Stomp.over(socket);
         stompClient.connect(
           { chatRoomId: chatRoomId, userId: 1 },
