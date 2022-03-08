@@ -21,6 +21,7 @@ const Admin = React.lazy(() => import("@src/pages/admin/admin"));
 // resmanager
 const Food = React.lazy(() => import("@src/pages/resManager/food"));
 const Promotion = React.lazy(() => import("@src/pages/resManager/promotion"));
+const Order = React.lazy(() => import("@src/pages/resManager/order"));
 
 const Page =
   (Component, roles = []) =>
@@ -96,9 +97,9 @@ export const route_res_manager = [
     exact: true,
   },
   {
-    component: Page(Guest, []),
+    component: Page(Order, []),
     accessRoles: [],
-    path: ["/res-manager/guest"],
+    path: ["/res-manager/order"],
     exact: true,
   },
 ];

@@ -79,7 +79,7 @@ const Chat = (props) => {
         idTeam: idTeamParam,
         selectTeam: listTeam.find((item) => item.id === idTeamParam),
       });
-      getListMessage({ idTeam: params.id, size: 999 });
+      getListMessage({ idTeam: params.id, size: 20, sort: "createdAt,asc" });
     }
   }, [listTeam]);
 
@@ -316,11 +316,15 @@ const Chat = (props) => {
                               color:
                                 selectTeam?.order?.state === 2
                                   ? "green"
+                                  : selectTeam?.order?.state === 1
+                                  ? "red"
                                   : "blue",
                             }}
                           >
                             {selectTeam?.order?.state === 2
                               ? "Xác nhận thành công"
+                              : selectTeam?.order?.state === 1
+                              ? "Hủy xác nhận"
                               : "Chờ xác nhận"}
                           </div>
                         </>
@@ -358,7 +362,7 @@ const Chat = (props) => {
                               idTeam,
                               phoneNumber: state.phoneNumber,
                               status: 1,
-                              time: state.time?.format("YYYY-MM-DD HH:mm"),
+                              time: state.time?.format("YYYY-MM-DD HH:mm:ss"),
                             }).then((res) => {
                               if (res && res.code === 0) {
                                 updateMessage({

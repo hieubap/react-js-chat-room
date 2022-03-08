@@ -7,17 +7,13 @@ const UserCell = ({ chat }) => {
   const { _getList, updateData } = useDispatch().message;
   const { idTeam } = useSelector((state) => state.message);
 
-  console.log(idTeam, chat, "idTeam");
-
-  // useEffect(() => {}, []);
-
   return (
     <div
       className={`gx-chat-user-item ${idTeam === chat.id ? "active" : ""}`}
       onClick={() => {
         _getList({
           idTeam: chat?.id,
-          size: 999,
+          size: 20,
           sort: "createdAt,asc",
         }).finally(() => {
           document
