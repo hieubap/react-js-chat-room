@@ -1,18 +1,19 @@
 import React, { useEffect } from "react";
 import { Avatar } from "antd";
 import moment from "moment";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const UserCell = ({ chat, selectedSectionId, onSelectUser }) => {
+const UserCell = ({ chat }) => {
   const { _getList, updateData } = useDispatch().message;
+  const { idTeam } = useSelector((state) => state.message);
+
+  console.log(idTeam, chat, "idTeam");
 
   // useEffect(() => {}, []);
 
   return (
     <div
-      className={`gx-chat-user-item ${
-        selectedSectionId === chat.id ? "active" : ""
-      }`}
+      className={`gx-chat-user-item ${idTeam === chat.id ? "active" : ""}`}
       onClick={() => {
         _getList({
           idTeam: chat?.id,

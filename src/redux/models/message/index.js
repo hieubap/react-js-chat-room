@@ -23,7 +23,7 @@ export default {
           // }
           document
             .getElementById("id-content-chat-message")
-            .scrollIntoView({ block: "end", behavior: "smooth" });
+            ?.scrollIntoView({ block: "end", behavior: "smooth" });
         }
       },
     }),

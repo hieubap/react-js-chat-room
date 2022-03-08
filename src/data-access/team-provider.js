@@ -16,4 +16,16 @@ export default {
         });
     });
   },
+  joinTeam: (body) => {
+    return new Promise((resolve, reject) => {
+      clientUtils
+        .requestApi("post", API.team + "/join", body)
+        .then((x) => {
+          resolve(x);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  },
 };

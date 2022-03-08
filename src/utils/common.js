@@ -15,6 +15,18 @@ const combineUrlParams = (url = "", params = {}) => {
   return `${url}?${paramUrl}`;
 };
 
+// chuyển param thành object
+export const parseParams = () => {
+  const { search } = window.location;
+  const arrParam = (search.split("?")[1] || "").split("&");
+  const output = {};
+  arrParam.forEach((item) => {
+    const arr = item.split("=");
+    output[arr[0]] = arr[1];
+  });
+  return output;
+};
+
 const timeFromNow = (fromDate, format) => {
   const date = new Date(fromDate);
   const fy = date.getFullYear();

@@ -15,11 +15,15 @@ const Shop = ({ listAdd = [] }) => {
 
   const {
     food: { _getList: getListFood },
+    resManager: { _detail: getDetail },
   } = useDispatch();
 
   useEffect(() => {
     let idRes = getIdFromUrl();
-    if (idRes) getListFood({ idRes });
+    if (idRes) {
+      getListFood({ idRes });
+      getDetail(idRes);
+    }
   }, []);
 
   const tabs = [

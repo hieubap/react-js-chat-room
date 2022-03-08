@@ -1,4 +1,14 @@
-import { Avatar, Button, Drawer, Input, message, Popconfirm, Tabs } from "antd";
+import {
+  Avatar,
+  Button,
+  DatePicker,
+  Drawer,
+  Input,
+  message,
+  Popconfirm,
+  Tabs,
+  TimePicker,
+} from "antd";
 import CircularProgress from "@core/components/CircularProgress";
 import CustomScrollbars from "@core/components/CustomScrollbar";
 import IntlMessages from "@core/components/IntlMessages";
@@ -14,6 +24,8 @@ import conversationList from "./data/conversationList";
 import { StyledWrapper } from "./styled";
 import SendOutlinedIcon from "@material-ui/icons/SendOutlined";
 import InputTimeout from "@src/components/InputTimeout";
+import { parseParams } from "@src/utils/common";
+import moment from "moment";
 // import "./index.css";
 
 const TabPane = Tabs.TabPane;
@@ -42,6 +54,8 @@ const Chat = (props) => {
     chat: { connect, sendMessage },
     team: { _createOrEdit: createTeam, _getList: getTeam, addUser },
     user: { _getList: _getListUser },
+    message: { updateData: updateMessage, _getList: getListMessage },
+    order: { _createOrEdit: datBan },
   } = useDispatch();
 
   const { _listData: listTeam } = useSelector((state) => state.team);
@@ -53,11 +67,21 @@ const Chat = (props) => {
   } = useSelector((state) => state.message);
   const { _listData: listUser } = useSelector((state) => state.user);
 
-  console.log(listMessage, "listmessage");
-
   useEffect(() => {
     connect();
   }, []);
+  useEffect(() => {
+    const params = parseParams();
+
+    if (params.id && listTeam.length > 0) {
+      const idTeamParam = parseInt(params.id);
+      updateMessage({
+        idTeam: idTeamParam,
+        selectTeam: listTeam.find((item) => item.id === idTeamParam),
+      });
+      getListMessage({ idTeam: params.id, size: 999 });
+    }
+  }, [listTeam]);
 
   const filterContact = (userName) => {
     if (userName === "") {
@@ -256,8 +280,105 @@ const Chat = (props) => {
                           }}
                         >
                           {item.name}
+                          {item.isAdmin && <strong> (Admin)</strong>}
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+                {state.selectAction === 0 && (
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      {selectTeam?.order ? (
+                        <>
+                          <div>
+                            Số điện thoại: {selectTeam.order?.phoneNumber}
+                          </div>
+                          <div>
+                            Thời gian:{" "}
+                            {moment(selectTeam.order?.time).format(
+                              "HH:mm DD/MM/YYYY"
+                            )}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: 18,
+                              border: "1px solid",
+                              borderRadius: 10,
+                              padding: 5,
+                              marginTop: 25,
+                              color:
+                                selectTeam?.order?.state === 2
+                                  ? "green"
+                                  : "blue",
+                            }}
+                          >
+                            {selectTeam?.order?.state === 2
+                              ? "Xác nhận thành công"
+                              : "Chờ xác nhận"}
+                          </div>
+                        </>
+                      ) : auth?.userId === selectTeam?.idLeader ? (
+                        <>
+                          <InputTimeout
+                            placeholder="Số điện thoại"
+                            onChange={(phoneNumber) => {
+                              setState({ phoneNumber });
+                            }}
+                            style={{ marginBottom: 10 }}
+                          />
+                          <DatePicker
+                            showTime={{ format: "HH:mm" }}
+                            format={"HH:mm DD/MM/YYYY"}
+                            onOk={(time) => {
+                              setState({ time });
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      {auth?.userId === selectTeam?.idLeader && (
+                        <Button
+                          disabled={
+                            !state.phoneNumber ||
+                            !state.time ||
+                            selectTeam?.order
+                          }
+                          type="primary"
+                          style={{ marginTop: 20 }}
+                          onClick={() => {
+                            datBan({
+                              idTeam,
+                              phoneNumber: state.phoneNumber,
+                              status: 1,
+                              time: state.time?.format("YYYY-MM-DD HH:mm"),
+                            }).then((res) => {
+                              if (res && res.code === 0) {
+                                updateMessage({
+                                  selectTeam: {
+                                    ...selectTeam,
+                                    order: res.data,
+                                  },
+                                });
+                                message.success(
+                                  "Đặt đơn thành công chờ xác nhận"
+                                );
+                              } else {
+                                message.error(res.message);
+                              }
+                            });
+                          }}
+                        >
+                          Đặt bàn
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -268,8 +389,6 @@ const Chat = (props) => {
       </div>
     );
   };
-
-  console.log(listTeam, selectTeam, "listTeam");
 
   const ChatUsers = () => {
     return (
@@ -385,8 +504,6 @@ const Chat = (props) => {
   const handleChangeIndex = (index) => {
     setState({ selectedTabIndex: index });
   };
-
-  console.log(state, "state...");
 
   const onSelectUser = (selectTeam) => {
     setState({ selectTeam });
