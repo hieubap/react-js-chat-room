@@ -93,11 +93,26 @@ const Login = ({ _login, history }) => {
                   <i className="fa fa-unlock" aria-hidden="true"></i>
                 </span>
               </div>
-              <Radio.Group onChange={onChange} value={state.role}>
-                <Radio value={1}>Khách</Radio>
-                <Radio value={2}>Quản lý nhà hàng</Radio>
-                <Radio value={3}>Quản lý</Radio>
+              <Radio.Group
+                style={{
+                  background: "white",
+                  padding: 8,
+                  borderRadius: 10,
+                }}
+                onChange={onChange}
+                value={state.role}
+              >
+                <Radio value={1}>
+                  <b>Khách</b>
+                </Radio>
+                <Radio value={2}>
+                  <b>Quản lý nhà hàng</b>
+                </Radio>
+                <Radio value={3}>
+                  <b>Quản lý</b>
+                </Radio>
               </Radio.Group>
+
               <div className="sub-w3l">
                 <h6>
                   <a href="#">Forgot Password?</a>

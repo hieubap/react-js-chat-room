@@ -199,7 +199,7 @@ const Chat = (props) => {
     {
       name: (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div>{selectTeam?.active ? "Khóa nhóm" : "Mở khóa"}</div>
+          <div>{selectTeam?.active ? "Khóa nhóm" : "Đã khóa"}</div>
 
           <LockOpenOutlined
             style={{
@@ -212,6 +212,9 @@ const Chat = (props) => {
         </div>
       ),
       onClick: () => {
+        if(!selectTeam.active){
+          return;
+        }
         const data = {
           active: !selectTeam.active,
           id: selectTeam.id,

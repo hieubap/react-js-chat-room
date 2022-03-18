@@ -5,10 +5,10 @@
     "static/js/1.f7598307.chunk.js": "/static/js/1.f7598307.chunk.js",
     "static/js/1.f7598307.chunk.js.map": "/static/js/1.f7598307.chunk.js.map",
     "main.css": "/static/css/main.6198e78b.chunk.css",
-    "main.js": "/static/js/main.fcab40a4.chunk.js",
-    "main.js.map": "/static/js/main.fcab40a4.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.dbf25ad9.js",
-    "runtime-main.js.map": "/static/js/runtime-main.dbf25ad9.js.map",
+    "main.js": "/static/js/main.7fba1885.chunk.js",
+    "main.js.map": "/static/js/main.7fba1885.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.d8be89fe.js",
+    "runtime-main.js.map": "/static/js/runtime-main.d8be89fe.js.map",
     "static/css/4.a9cae902.chunk.css": "/static/css/4.a9cae902.chunk.css",
     "static/js/4.9fc01554.chunk.js": "/static/js/4.9fc01554.chunk.js",
     "static/js/4.9fc01554.chunk.js.map": "/static/js/4.9fc01554.chunk.js.map",
@@ -34,10 +34,10 @@
     "static/js/14.f47e0fb9.chunk.js.map": "/static/js/14.f47e0fb9.chunk.js.map",
     "static/js/15.135d353e.chunk.js": "/static/js/15.135d353e.chunk.js",
     "static/js/15.135d353e.chunk.js.map": "/static/js/15.135d353e.chunk.js.map",
-    "static/js/16.43456bd5.chunk.js": "/static/js/16.43456bd5.chunk.js",
-    "static/js/16.43456bd5.chunk.js.map": "/static/js/16.43456bd5.chunk.js.map",
-    "static/js/17.1eb6f336.chunk.js": "/static/js/17.1eb6f336.chunk.js",
-    "static/js/17.1eb6f336.chunk.js.map": "/static/js/17.1eb6f336.chunk.js.map",
+    "static/js/16.81d1c168.chunk.js": "/static/js/16.81d1c168.chunk.js",
+    "static/js/16.81d1c168.chunk.js.map": "/static/js/16.81d1c168.chunk.js.map",
+    "static/js/17.96cf23f5.chunk.js": "/static/js/17.96cf23f5.chunk.js",
+    "static/js/17.96cf23f5.chunk.js.map": "/static/js/17.96cf23f5.chunk.js.map",
     "index.html": "/index.html",
     "static/css/4.a9cae902.chunk.css.map": "/static/css/4.a9cae902.chunk.css.map",
     "static/css/main.6198e78b.chunk.css.map": "/static/css/main.6198e78b.chunk.css.map",
@@ -65,10 +65,10 @@
     "static/media/sport4.jpg": "/static/media/sport4.e76ead34.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.dbf25ad9.js",
+    "static/js/runtime-main.d8be89fe.js",
     "static/css/4.a9cae902.chunk.css",
     "static/js/4.9fc01554.chunk.js",
     "static/css/main.6198e78b.chunk.css",
-    "static/js/main.fcab40a4.chunk.js"
+    "static/js/main.7fba1885.chunk.js"
   ]
 }

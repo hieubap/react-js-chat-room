@@ -50,7 +50,7 @@ export default {
             );
             setTimeout(() => {
               dispatch.auth._logout();
-            }, 5000);
+            }, 10000);
           }
         });
 
