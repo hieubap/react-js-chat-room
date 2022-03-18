@@ -102,7 +102,7 @@ const Food = ({ auth, getUser, getList, listData, updateData }) => {
         <Content>
           <div className="body">
             <div className="content">
-              <div className="header-title">Quản lý khuyến mãi</div>
+              <div className="header-title">Xem đánh giá</div>
               <div className="header-content">
                 <div className="group-search">
                   <InputSearch

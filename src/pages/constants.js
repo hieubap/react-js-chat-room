@@ -103,6 +103,12 @@ export const route_res_manager = [
     path: ["/res-manager/review"],
     exact: true,
   },
+  {
+    component: Page(Order, []),
+    accessRoles: [],
+    path: ["/res-manager/order"],
+    exact: true,
+  },
 ];
 
 export const route_admin = [
