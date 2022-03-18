@@ -6,6 +6,7 @@ import {
   Input,
   message,
   Popconfirm,
+  Select,
   Tabs,
   TimePicker,
 } from "antd";
@@ -58,6 +59,10 @@ const Chat = (props) => {
     message: { updateData: updateMessage, _getList: getListMessage },
     order: { _createOrEdit: datBan },
   } = useDispatch();
+  const { _listData: listDataRes = [] } = useSelector(
+    (state) => state.resManager
+  );
+  const { _getList: getListRes } = useDispatch().resManager;
 
   const { _listData: listTeam } = useSelector((state) => state.team);
   const { auth } = useSelector((state) => state.auth);
@@ -84,6 +89,7 @@ const Chat = (props) => {
   }, [listTeam]);
 
   useEffect(() => {
+    getListRes({ size: 999 });
     const params = parseParams();
     if (params.id) {
       getTeam({ userId: auth?.userId });
@@ -394,6 +400,19 @@ const Chat = (props) => {
                       ) : (
                         <></>
                       )}
+                      {!selectTeam.idRes && (
+                        <Select
+                          placeholder="Vui lòng chọn cửa hàng"
+                          options={listDataRes.map((item) => ({
+                            value: item.id,
+                            label: item.name,
+                          }))}
+                          onSelect={(e) => {
+                            console.log(e, "e");
+                            setState({ idRes: e });
+                          }}
+                        ></Select>
+                      )}
                       {auth?.userId === selectTeam?.idLeader && (
                         <Button
                           disabled={
@@ -404,6 +423,16 @@ const Chat = (props) => {
                           type="primary"
                           style={{ marginTop: 20 }}
                           onClick={() => {
+                            if (!selectTeam.idRes) {
+                              console.log(selectTeam, "selectteam");
+                              const data = {
+                                active: selectTeam.active,
+                                id: selectTeam.id,
+                                idLeader: selectTeam.idLeader,
+                                idRes: state.idRes,
+                              };
+                              createTeam(data);
+                            }
                             datBan({
                               idTeam,
                               phoneNumber: state.phoneNumber,
@@ -478,6 +507,7 @@ const Chat = (props) => {
           <Popconfirm
             onConfirm={() => {
               createTeam({
+                active: true,
                 idLeader: auth?.userId,
               }).then((res) => {
                 if (res && res.code === 0) {
