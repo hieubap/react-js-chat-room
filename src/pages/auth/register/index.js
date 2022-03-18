@@ -37,7 +37,7 @@ const Register = ({ _register, history }) => {
       message.error("password không đúng");
       return;
     }
-    _register({ address, name, username, password }).then((res) => {
+    _register({ address, name, username, password, active: true }).then((res) => {
       if (res && res.code === 0) {
         message.success("Đăng ký thành công. Vui lòng đăng nhập vào hệ thống");
 
