@@ -45,7 +45,7 @@ const ModalProfile = ({ auth, _createOrEdit, onCancel, updateAuth }) => {
       footer={
         <WrapperStyled>
           <div className="footer">
-            {state.isEdit ? (
+            {/* {state.isEdit ? (
               <>
                 <Button
                   onClick={() => {
@@ -71,7 +71,7 @@ const ModalProfile = ({ auth, _createOrEdit, onCancel, updateAuth }) => {
               >
                 Chỉnh sửa
               </Button>
-            )}
+            )} */}
           </div>
         </WrapperStyled>
       }
@@ -117,6 +117,7 @@ const ModalProfile = ({ auth, _createOrEdit, onCancel, updateAuth }) => {
           <>
             <div className="fullName">{auth.full_name}</div>
             <div className="username">{auth.username}</div>
+            <div className="username">ID USER: {auth.userId}</div>
             <div className="avatar">
               <img src={getImg(auth.avatar)} />
             </div>

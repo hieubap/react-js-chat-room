@@ -12,7 +12,7 @@ const Info = ({ display }) => {
 
   return (
     <div
-      style={{ position: "relative" }}
+      style={{ position: "relative", minHeight: 600 }}
       className={display ? "" : "tab-not-visible"}
     >
       <img style={{ width: "100%" }} src={getImg(_dataFilter.avatar)} />

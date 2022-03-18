@@ -1,5 +1,6 @@
 import Authorization from "@components/Authorization";
 import React, { Suspense } from "react";
+import Review from "./resManager/review";
 
 // home page
 const Home = React.lazy(() => import("@src/pages/user/home"));
@@ -97,9 +98,9 @@ export const route_res_manager = [
     exact: true,
   },
   {
-    component: Page(Order, []),
+    component: Page(Review, []),
     accessRoles: [],
-    path: ["/res-manager/order"],
+    path: ["/res-manager/review"],
     exact: true,
   },
 ];

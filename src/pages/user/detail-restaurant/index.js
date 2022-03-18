@@ -15,7 +15,9 @@ const Shop = ({ listAdd = [] }) => {
 
   const {
     food: { _getList: getListFood },
-    resManager: { _detail: getDetail },
+    review: { _getList: getListComment },
+    promotion: { _getList: getListPromotion },
+    resManager: { _detail: getDetail, updateData },
   } = useDispatch();
 
   useEffect(() => {
@@ -23,6 +25,9 @@ const Shop = ({ listAdd = [] }) => {
     if (idRes) {
       getListFood({ idRes });
       getDetail(idRes);
+      getListComment({ idRes, size: 999 });
+      getListPromotion({ idRes, size: 999 });
+      updateData({ idRes });
     }
   }, []);
 
@@ -76,7 +81,7 @@ const Shop = ({ listAdd = [] }) => {
 
         <footer className="footer">
           <div className="grid wide footer__content">
-            <div className="row">
+            {/* <div className="row">
               <div className="col l-2-3 m-3 c-6">
                 <div className="footer__heading">Chăm sóc khách hàng</div>
                 <ul className="footer-list">
@@ -160,7 +165,7 @@ const Shop = ({ listAdd = [] }) => {
                   </li>
                 </ul>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="footer__bottom">
@@ -347,14 +352,14 @@ const Shop = ({ listAdd = [] }) => {
         </div>
       </div>
 
-      <div className="buy-bottom" onClick={() => setState({ showBill: true })}>
+      {/* <div className="buy-bottom" onClick={() => setState({ showBill: true })}>
         <div className="card-fixed">
           <i className="header__cart-icon fas fa-shopping-cart"></i>
           <span className="header__cart-wrap-notice" id="number_select">
             {listAdd.length}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {state.showBill && (
         <GioHang onCancel={() => setState({ showBill: false })} />

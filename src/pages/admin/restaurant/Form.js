@@ -52,7 +52,7 @@ const PlaceForm = ({ reload = () => {}, ...props }, ref) => {
         }
       });
     } else {
-      resManagerProvider._post(body).then((json) => {
+      resManagerProvider._post({ ...body, active: true }).then((json) => {
         if (json && json.code === 0 && json.data) {
           setState({ ...state, visible: false });
           form.resetFields();
@@ -109,11 +109,7 @@ const PlaceForm = ({ reload = () => {}, ...props }, ref) => {
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Row>
           <Col span="24">
-            <Form.Item
-              label="Ảnh"
-              name="avatar"
-              valuePropName="fileUrl"
-            >
+            <Form.Item label="Ảnh" name="avatar" valuePropName="fileUrl">
               <UploadImage
                 className="avatar-uploader"
                 onChange={(avatar) => {

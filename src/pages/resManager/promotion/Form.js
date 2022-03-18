@@ -24,7 +24,6 @@ const PlaceForm = ({ reload = () => {}, auth, ...props }, ref) => {
 
   useImperativeHandle(ref, () => ({
     show: (data = {}, isDetail) => {
-      debugger;
       setState({ ...state, isDetail, data, visible: true });
       form.setFieldsValue({ ...data, password2: data.password });
     },

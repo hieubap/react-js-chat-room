@@ -27,6 +27,7 @@ import InputTimeout from "@src/components/InputTimeout";
 import { parseParams } from "@src/utils/common";
 import moment from "moment";
 // import "./index.css";
+import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 
 const TabPane = Tabs.TabPane;
 
@@ -67,9 +68,9 @@ const Chat = (props) => {
   } = useSelector((state) => state.message);
   const { _listData: listUser } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    connect();
-  }, []);
+  // useEffect(() => {
+  //   connect();
+  // }, []);
   useEffect(() => {
     const params = parseParams();
 
@@ -182,6 +183,45 @@ const Chat = (props) => {
     },
     {
       name: "Rời nhóm",
+    },
+    {
+      name: (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div>{selectTeam?.active ? "Khóa nhóm" : "Mở khóa"}</div>
+
+          <LockOpenOutlined
+            style={{
+              fontSize: 28,
+              marginRight: 5,
+              cursor: "pointer",
+              color: selectTeam?.active ? "var(--green)" : "var(--red)",
+            }}
+          />
+        </div>
+      ),
+      onClick: () => {
+        const data = {
+          active: !selectTeam.active,
+          id: selectTeam.id,
+          idLeader: selectTeam.idLeader,
+          idRes: selectTeam.idRes,
+          numberMember: selectTeam.numberMember,
+        };
+        if (auth?.userId !== selectTeam.idLeader) {
+          message.error("Bạn không phải chủ nhóm. Không thể khóa nhóm");
+          return;
+        }
+        createTeam(data).then((res) => {
+          if (res && res.code === 0) {
+            message.success(
+              res.data?.active ? "Mở khóa thành công" : "Khóa nhóm thành công"
+            );
+            updateMessage({
+              selectTeam: res.data,
+            });
+          }
+        });
+      },
     },
   ];
 

@@ -4,14 +4,16 @@ import Button from "@components/Button";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import InputSearch from "@src/components/InputSearch";
 import Table from "@src/components/Table";
+import userProvider from "@src/data-access/admin-provider";
 import { getImg } from "@src/utils";
-import { Tooltip } from "antd";
+import { Badge, message, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import RestaurantForm from "./Form";
 import { Content } from "./styled";
+import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 
-const Admin = ({ getList, listData }) => {
+const Admin = ({ lockAccount, getList, listData }) => {
   const refModal = useRef();
   const [state, _setState] = useState({
     showModalPost: false,
@@ -54,10 +56,64 @@ const Admin = ({ getList, listData }) => {
       dataIndex: "address",
     },
     {
+      title: "Trạng thái",
+      dataIndex: "active",
+      align: "center",
+      render: (item) => (
+        <Badge
+          className="w100 text-white pointer"
+          // onClick={() => history.push("/manage/info-course/" + data.id)}
+          style={{ backgroundColor: item ? "var(--green)" : "var(--red)" }}
+          count={item ? "Hoạt động" : "Khóa"}
+        ></Badge>
+      ),
+    },
+    {
       title: "Tiện ích",
       width: 150,
       render: (_, item) => (
         <div>
+          <Tooltip title={item.active ? "Khóa" : "Mở khóa"}>
+            <LockOpenOutlined
+              onClick={() => {
+                userProvider
+                  ._put(
+                    {
+                      active: !item.active,
+                      address: item.address,
+                      avatar: item.avatar,
+                      name: item.name,
+                      password: item.password,
+                      username: item.username,
+                    },
+                    item?.id
+                  )
+                  .then((json) => {
+                    if (json && json.code === 0 && json.data) {
+                      message.success(
+                        json.data?.active
+                          ? "Mở khóa thành công"
+                          : "Khóa thành công"
+                      );
+                      getList({ size: 20 });
+                      if (!json.data?.active) {
+                        lockAccount({ idLockAccount: item.id, type: 1 });
+                      }
+                    } else if (json && json.code === 401) {
+                      window.location.href = "/login";
+                    } else {
+                      message.error(json.message);
+                    }
+                  });
+              }}
+              style={{
+                fontSize: 28,
+                marginRight: 5,
+                cursor: "pointer",
+                color: item.active ? "var(--red)" : "var(--green)",
+              }}
+            />
+          </Tooltip>
           <Tooltip title="Chỉnh sửa">
             <EditOutlinedIcon
               onClick={() => refModal.current && refModal.current.show(item)}
@@ -160,9 +216,14 @@ export default connect(
     auth,
     listData,
   }),
-  ({ admin: { _getList: getList, updateData }, account: { getUser } }) => ({
+  ({
+    admin: { _getList: getList, updateData },
+    account: { getUser },
+    chat: { lockAccount },
+  }) => ({
     getList,
     updateData,
     getUser,
+    lockAccount,
   })
 )(Admin);

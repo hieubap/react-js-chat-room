@@ -1,3 +1,4 @@
+import { getImg } from "@src/utils";
 import { message } from "antd";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -17,9 +18,7 @@ const CardSport = ({ item }) => {
       <div className="item-sport">
         <div className="item-sport_body">
           <div className="item-sport_background">
-            <img
-              src={item.img || require("@assets/images2/sport1.jpg").default}
-            />
+            <img src={getImg(item.avatar)} />
           </div>
           <div className="item-sport_content">
             <div className="title">{item.name}</div>

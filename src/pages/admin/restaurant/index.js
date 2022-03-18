@@ -1,4 +1,6 @@
 import { ReactComponent as AddIcon } from "@assets/svg/add.svg";
+import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
+import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 import "@assets/css/font-awesome.css";
 import InputSearch from "@src/components/InputSearch";
 import Table from "@src/components/Table";
@@ -9,9 +11,17 @@ import Button from "@components/Button";
 import RestaurantForm from "./Form";
 import { getImg } from "@src/utils";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
-import { Tooltip } from "antd";
+import { Badge, message, Tooltip } from "antd";
+import resManagerProvider from "@src/data-access/res-manager-provider";
 
-const Restaurant = ({ auth, getUser, getList, listData, updateData }) => {
+const Restaurant = ({
+  lockAccount,
+  auth,
+  getUser,
+  getList,
+  listData,
+  updateData,
+}) => {
   const refModal = useRef();
   const [state, _setState] = useState({
     showModalPost: false,
@@ -57,10 +67,64 @@ const Restaurant = ({ auth, getUser, getList, listData, updateData }) => {
       dataIndex: "address",
     },
     {
+      title: "Trạng thái",
+      dataIndex: "active",
+      align: "center",
+      render: (item) => (
+        <Badge
+          className="w100 text-white pointer "
+          // onClick={() => history.push("/manage/info-course/" + data.id)}
+          style={{ backgroundColor: item ? "var(--green)" : "var(--red)" }}
+          count={item ? "Hoạt động" : "Khóa"}
+        ></Badge>
+      ),
+    },
+    {
       title: "Tiện ích",
       width: 150,
       render: (_, item) => (
         <div>
+          <Tooltip title={item.active ? "Khóa" : "Mở khóa"}>
+            <LockOpenOutlined
+              onClick={() => {
+                resManagerProvider
+                  ._put(
+                    {
+                      active: !item.active,
+                      address: item.address,
+                      avatar: item.avatar,
+                      name: item.name,
+                      password: item.password,
+                      username: item.username,
+                    },
+                    item?.id
+                  )
+                  .then((json) => {
+                    if (json && json.code === 0 && json.data) {
+                      message.success(
+                        json.data?.active
+                          ? "Mở khóa thành công"
+                          : "Khóa thành công"
+                      );
+                      getList({ size: 20 });
+                      if (!json.data?.active) {
+                        lockAccount({ idLockAccount: item.id, type: 2 });
+                      }
+                    } else if (json && json.code === 401) {
+                      window.location.href = "/login";
+                    } else {
+                      message.error(json.message);
+                    }
+                  });
+              }}
+              style={{
+                fontSize: 28,
+                marginRight: 5,
+                cursor: "pointer",
+                color: item.active ? "var(--red)" : "var(--green)",
+              }}
+            />
+          </Tooltip>
           <Tooltip title="Chỉnh sửa">
             <EditOutlinedIcon
               onClick={() => refModal.current && refModal.current.show(item)}
@@ -72,6 +136,28 @@ const Restaurant = ({ auth, getUser, getList, listData, updateData }) => {
               }}
             />
           </Tooltip>
+          {/* <Tooltip title="Chỉnh sửa">
+            <DeleteForeverOutlinedIcon
+              onClick={() => {
+                resManagerProvider._delete(item?.id).then((json) => {
+                  if (json && json.code === 0 && json.data) {
+                    message.success("Xóa thành công");
+                    getList({ size: 20 });
+                  } else if (json && json.code === 401) {
+                    window.location.href = "/login";
+                  } else {
+                    message.error(json.message);
+                  }
+                });
+              }}
+              style={{
+                fontSize: 28,
+                marginRight: 5,
+                cursor: "pointer",
+                color: "var(--red)",
+              }}
+            />
+          </Tooltip> */}
         </div>
       ),
     },
@@ -166,9 +252,11 @@ export default connect(
   ({
     resManager: { _getList: getList, updateData },
     account: { getUser },
+    chat: { lockAccount },
   }) => ({
     getList,
     updateData,
     getUser,
+    lockAccount,
   })
 )(Restaurant);

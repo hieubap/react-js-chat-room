@@ -38,6 +38,21 @@ export default {
         stompClient.subscribe("/topic/publicChatRoom", (data) => {
           dispatch.message.updateMessage(JSON.parse(data?.body));
         });
+        stompClient.subscribe("/topic/public.realtime", (data) => {
+          const resData = JSON.parse(data?.body);
+          if (
+            resData.idLockAccount === state.auth?.auth?.userId &&
+            state.auth?.auth?.type === resData.type
+          ) {
+            message.error(
+              "Tài khoản của bị đã bị khóa. Hệ thống sẽ tự động đăng xuất. Vui lòng liên hệ quản trị viên",
+              10000
+            );
+            setTimeout(() => {
+              dispatch.auth._logout();
+            }, 5000);
+          }
+        });
 
         // dispatch.chat.sendMessage();
       };
@@ -87,6 +102,10 @@ export default {
             });
           }
         });
+    },
+    lockAccount: (data, state) => {
+      console.log(data, "data..");
+      state.chat.stompClient?.send("/app/chat.lock", {}, JSON.stringify(data));
     },
   }),
 };
