@@ -73,7 +73,6 @@ const Chat = (props) => {
   // }, []);
   useEffect(() => {
     const params = parseParams();
-
     if (params.id && listTeam.length > 0) {
       const idTeamParam = parseInt(params.id);
       updateMessage({
@@ -83,6 +82,13 @@ const Chat = (props) => {
       getListMessage({ idTeam: params.id, size: 20, sort: "createdAt,asc" });
     }
   }, [listTeam]);
+
+  useEffect(() => {
+    const params = parseParams();
+    if (params.id) {
+      getTeam({ userId: auth?.userId });
+    }
+  }, []);
 
   const filterContact = (userName) => {
     if (userName === "") {

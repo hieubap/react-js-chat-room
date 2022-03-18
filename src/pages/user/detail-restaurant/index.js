@@ -1,6 +1,6 @@
 import { getIdFromUrl } from "@src/utils";
 import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import Comment from "./component/Comment";
 import GioHang from "./component/gio-hang";
 import Info from "./component/Info";
@@ -19,6 +19,8 @@ const Shop = ({ listAdd = [] }) => {
     promotion: { _getList: getListPromotion },
     resManager: { _detail: getDetail, updateData },
   } = useDispatch();
+
+  const { _dataFilter } = useSelector((state) => state.resManager);
 
   useEffect(() => {
     let idRes = getIdFromUrl();
@@ -67,7 +69,15 @@ const Shop = ({ listAdd = [] }) => {
                   </button>
                   <button className="home-filter__btn btn">Đánh giá</button> */}
                   <div class="home-filter__page">
-                    <span class="home-filter__page-num">Nhà hàng ABCD</span>
+                    <span
+                      class="home-filter__page-num"
+                      style={{
+                        fontSize: 20,
+                        color: "steelblue",
+                      }}
+                    >
+                      {_dataFilter.name}
+                    </span>
                   </div>
                 </div>
 

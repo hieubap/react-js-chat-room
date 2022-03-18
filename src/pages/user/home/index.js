@@ -22,7 +22,7 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
   return (
     <WrapperStyled>
       <div className="container">
-        <div className="container__product">
+        {/* <div className="container__product">
           <div className="container__product-list">
             {productData.map((item, index) => (
               <div key={index} href="" className="container__product-link">
@@ -36,10 +36,25 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
               </div>
             ))}
           </div>
+        </div> */}
+        <div
+          className="container__adver"
+          style={{ position: "fixed", left: 50 }}
+        >
+          <a href="" className="container__adver-link">
+            <img
+              src={require("@assets/images2/qc2.png").default}
+              alt=""
+              className="container__adver-img"
+            />
+          </a>
         </div>
-        <div className="container__body">
-          <div className="container__body--main">
-            {auth && (
+        <div
+          className="container__body"
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <div className="container__body--main" style={{ width: "50%" }}>
+            {auth && auth.type === 2 && (
               <button
                 className="container__body--postbtn js-container__body--postbtn"
                 onClick={() => {
@@ -64,8 +79,18 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
             )}
           </div>
         </div>
-        <div className="container__adver">
+        <div
+          className="container__adver"
+          style={{ position: "fixed", right: 50 }}
+        >
           <a href="" className="container__adver-link">
+            <img
+              src={require("@assets/images2/qc.png").default}
+              alt=""
+              className="container__adver-img"
+            />
+          </a>
+          {/* <a href="" className="container__adver-link">
             <img
               src="https://statics.lotuscdn.vn/thumb_w/300/web/v1/images/lachanviruscorona_right_banner.png"
               alt=""
@@ -78,14 +103,7 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
               alt=""
               className="container__adver-img"
             />
-          </a>
-          <a href="" className="container__adver-link">
-            <img
-              src="https://statics.lotuscdn.vn/thumb_w/300/web/v1/images/lachanviruscorona_right_banner.png"
-              alt=""
-              className="container__adver-img"
-            />
-          </a>
+          </a> */}
         </div>
       </div>
       {state.showModalPost && (

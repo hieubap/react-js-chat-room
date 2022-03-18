@@ -104,7 +104,7 @@ const Food = ({ auth, getUser, getList, listData, updateData }) => {
             <div className="content">
               <div className="header-title">Xem đánh giá</div>
               <div className="header-content">
-                <div className="group-search">
+                {/* <div className="group-search">
                   <InputSearch
                     type="text"
                     search={(value) =>
@@ -113,8 +113,8 @@ const Food = ({ auth, getUser, getList, listData, updateData }) => {
                     placeholder="Tìm tên"
                     style={{ width: "50%" }}
                   />
-                </div>
-                <div className="btn-create">
+                </div> */}
+                {/* <div className="btn-create">
                   <Button
                     content="Thêm mới"
                     onClick={() =>
@@ -122,7 +122,7 @@ const Food = ({ auth, getUser, getList, listData, updateData }) => {
                     }
                     iconSvg={AddIcon}
                   ></Button>
-                </div>
+                </div> */}
               </div>
 
               <div className="table-ds">

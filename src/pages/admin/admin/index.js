@@ -144,7 +144,7 @@ const Admin = ({ lockAccount, getList, listData }) => {
                     search={(value) =>
                       setParams({ ...params, page: 0, name: value })
                     }
-                    placeholder="Tìm tên cửa hàng"
+                    placeholder="Tìm tên"
                     style={{ width: "30%" }}
                   />
                   <InputSearch

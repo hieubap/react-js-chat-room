@@ -207,6 +207,10 @@ const Header = ({ auth, historySearch, saveHistory, _logout, getListPost }) => {
             {auth ? (
               <div
                 className="header__navbar-user-all"
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
                 onClick={() => {
                   setState({ openUserMenu: !state.openUserMenu });
                 }}

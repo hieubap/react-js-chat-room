@@ -146,7 +146,7 @@ const Food = ({ auth, getUser, getList, listData, updateData, save }) => {
                   <InputSearch
                     type="text"
                     search={(value) =>
-                      setParams({ ...params, page: 0, id: value })
+                      setParams({ ...params, page: 0, idTeam: value })
                     }
                     placeholder="ID đơn hàng"
                     style={{ width: "50%" }}

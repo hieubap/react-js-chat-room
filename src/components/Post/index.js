@@ -21,6 +21,8 @@ const Post = ({
   createdBy,
   isLike,
   avatar,
+  resManagerDTO,
+  idRes,
 
   auth,
   onEdit,
@@ -67,7 +69,7 @@ const Post = ({
 
       return;
     }
-    onLike({ isLike: !isLike, postId: id });
+    // onLike({ isLike: !isLike, postId: id });
     if (refTimeout.current) {
       clearTimeout(refTimeout.current);
     }
@@ -110,6 +112,8 @@ const Post = ({
     });
   };
 
+  console.log(idRes, "idREs", auth);
+
   const handleComment = () => {
     if (refComment.current?.getValue()?.length === 0) {
       message.error("Nội dung không được để trống");
@@ -118,6 +122,7 @@ const Post = ({
     createComment({
       userId: auth?.userId,
       postId: id,
+      idRes: auth?.userId,
       content: refComment.current?.getValue(),
     }).then((res) => {
       if (res && res.code === 0) {
@@ -147,26 +152,29 @@ const Post = ({
       <div className="container__body--main-framepost">
         <div className="container__body--main-framepost-header">
           <div className="container__body--main-frame-header">
-            <img src={getImg(avatar)} alt="" className="frame-header-avt" />
+            <img
+              src={getImg(resManagerDTO?.avatar)}
+              alt=""
+              className="frame-header-avt"
+            />
             <ul className="container__body--main-frame-headerNT">
-              <li className="frame-header-name">{author}</li>
+              <li className="frame-header-name">{resManagerDTO?.name}</li>
               <li className="frame-header-time">{timeFromNow(createdAt)}</li>
             </ul>
           </div>
           <div className="sidebar">
-            {auth?.userId &&
-              (auth?.userId === createdBy || auth?.role === "ROLE_1") && (
-                <label
-                  onClick={() => {
-                    setState({ showMenu: true });
-                  }}
-                >
-                  <i className="container__body--main-frame-header-menu fa fa-ellipsis-h"></i>
-                </label>
-              )}
+            {auth?.userId && auth?.userId === idRes && (
+              <label
+                onClick={() => {
+                  setState({ showMenu: true });
+                }}
+              >
+                <i className="container__body--main-frame-header-menu fa fa-ellipsis-h"></i>
+              </label>
+            )}
             {state.showMenu && (
               <div className="sidebar_menu post-menu-id">
-                {(auth?.userId === createdBy || auth?.role === "ROLE_1") && (
+                {auth?.userId === idRes && (
                   <ul className="sidebar_menu-list post-menu-id">
                     {auth?.userId === createdBy && (
                       <li
@@ -239,7 +247,7 @@ const Post = ({
           </div>
           <div
             className="container__framepost-action-cmt"
-            onClick={showComment}
+            // onClick={showComment}
           >
             <i className="container__framepost-action-cmt-icon fa fa-comments"></i>
             <span className="container__framepost-action-cmt-btn">
@@ -286,7 +294,7 @@ const Post = ({
                 <div className="content-comment">{item.content}</div>
               </div>
             </div>
-            {auth?.userId && auth?.userId === item.userId && (
+            {auth?.userId && auth?.userId === item.idRes && (
               <Tooltip title="Gỡ bình luận">
                 <i
                   className="fa fa-times delete-comment"

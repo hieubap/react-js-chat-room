@@ -9,7 +9,9 @@ import Button from "@components/Button";
 import RestaurantForm from "./Form";
 import { getImg } from "@src/utils";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
-import { Tooltip } from "antd";
+import { message, Tooltip } from "antd";
+import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
+import foodProvider from "@src/data-access/food-provider";
 
 const Food = ({ auth, getUser, getList, listData, updateData }) => {
   const refModal = useRef();
@@ -69,6 +71,28 @@ const Food = ({ auth, getUser, getList, listData, updateData }) => {
                 marginRight: 5,
                 cursor: "pointer",
                 color: "var(--blue)",
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Xóa">
+            <DeleteForeverOutlinedIcon
+              onClick={() => {
+                foodProvider._delete(item?.id).then((json) => {
+                  if (json && json.code === 0) {
+                    message.success("Xóa thành công");
+                    getList({ size: 20, idRes: auth.userId });
+                  } else if (json && json.code === 401) {
+                    window.location.href = "/login";
+                  } else {
+                    message.error(json.message);
+                  }
+                });
+              }}
+              style={{
+                fontSize: 28,
+                marginRight: 5,
+                cursor: "pointer",
+                color: "var(--red)",
               }}
             />
           </Tooltip>

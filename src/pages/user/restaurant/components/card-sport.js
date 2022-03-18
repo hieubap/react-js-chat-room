@@ -25,11 +25,11 @@ const CardSport = ({ item }) => {
             <div className="address">{item.address || "123 Lê thanh Nghị"}</div>
             <div className="description">
               <i className="icon fas fa-star"></i>
-              <span>4</span>
+              <span>{item.numStar}</span>
             </div>
             <div className="comment">
-              <span>{`${item.numberComment || 0} Lượt đánh giá`}</span>
-              <span>{`${item.numberLike || 1} Lượt thích`}</span>
+              <span>{`${item.numComment || 0} Lượt đánh giá`}</span>
+              {/* <span>{`${item.numberLike || 1} Lượt thích`}</span> */}
             </div>
             {/* <div className="btn-register">
               <div

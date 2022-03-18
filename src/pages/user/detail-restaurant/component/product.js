@@ -25,9 +25,7 @@ const Product = ({ data, addProduct, listAdd }) => {
           {/* <span class="home-product-item__price-old">
             {data.price?.formatPrice()}đ
           </span> */}
-          <span class="home-product-item__price-current">
-            {data.price?.formatPrice()}đ
-          </span>
+          <span class="home-product-item__price-current">{data.price}</span>
         </div>
         <div class="home-product-item__action">
           <span class="home-product-item__like home-product-item__like--liked">

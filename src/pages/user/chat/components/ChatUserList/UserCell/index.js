@@ -32,7 +32,9 @@ const UserCell = ({ chat }) => {
         </div>
 
         <div className="gx-chat-info">
-          <span className="gx-name h4">Nhóm {chat.id}</span>
+          <span className="gx-name h4">
+            Nhóm {chat.id} <b>{chat?.resManagerDTO?.name}</b>
+          </span>
           {/* <div className="gx-chat-info-des gx-text-truncate">{chat.lastMessage.substring(0, 25) + "..."}</div> */}
           <div className="gx-last-message-time">
             {moment(chat.createdAt).format("HH:mm DD/MM/YYYY")}

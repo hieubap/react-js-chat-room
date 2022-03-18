@@ -117,7 +117,14 @@ const ModalProfile = ({ auth, _createOrEdit, onCancel, updateAuth }) => {
           <>
             <div className="fullName">{auth.full_name}</div>
             <div className="username">{auth.username}</div>
-            <div className="username">ID USER: {auth.userId}</div>
+            <div className="username">
+              {auth.type === 3
+                ? "ID USER:"
+                : auth.type === 2
+                ? "ID RES:"
+                : "ID ADMIN: "}
+              {auth.userId}
+            </div>
             <div className="avatar">
               <img src={getImg(auth.avatar)} />
             </div>

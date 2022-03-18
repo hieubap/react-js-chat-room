@@ -4,8 +4,9 @@ export const WrapperStyled = styled.div`
   margin-top: 50px;
   padding-top: 5px;
   background-color: #eee;
-  min-height: 100vh;
+  height: 100vh;
   padding-bottom: 50px;
+  overflow-y: scroll;
   .title-group {
     margin: 20px;
     font-size: 24px;

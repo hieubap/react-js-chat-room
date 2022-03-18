@@ -31,7 +31,12 @@ const ModalCreatePost = ({
       return;
     }
 
-    _createOrEdit({ id: _dataEdit?.id, content, imgPath }).then((res) => {
+    _createOrEdit({
+      id: _dataEdit?.id,
+      idRes: auth.userId,
+      content,
+      imgPath,
+    }).then((res) => {
       if (res && res.code === 0) {
         message.success(
           _dataEdit?.id ? "Sửa bài đăng thành công" : "Đăng bài viết thành công"
