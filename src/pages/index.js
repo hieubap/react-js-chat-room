@@ -8,30 +8,35 @@ import Admin from "./admin";
 import { theme } from "./constants";
 import Site from "./user";
 import ResManager from "./resManager";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import ChatContainer from "./chat";
 
 Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item);
 };
 
 const App = (props) => {
-  const { connect } = useDispatch().chat;
+  const { connect } = useDispatch().socket;
+  const { auth } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    connect();
-  }, []);
-  
+    console.log(auth,'auth');
+    if (auth?.userId) {
+      connect();
+    }
+  }, [auth]);
+
   return (
     <ThemeProvider theme={theme}>
       <ConfigProvider locale={viVN}>
-        <Switch>
+        <ChatContainer />
+        {/* <Switch>
           <Route path={"/fsocial"} component={Site} />
           <Route path={"/res-manager"} component={ResManager} />
           <Route path={"/admin"} component={Admin} />
           <Route path={"/auth"} component={Auth} />
-          {/* <Route path={"/"} component={Site} /> */}
           <Redirect path="/" to={"/fsocial/home"} />
-        </Switch>
+        </Switch> */}
       </ConfigProvider>
     </ThemeProvider>
   );

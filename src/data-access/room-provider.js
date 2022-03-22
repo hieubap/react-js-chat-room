@@ -5,16 +5,12 @@ import clientUtils from "@utils/client-utils";
 
 export default {
   ...baseProvider(API.room),
-  getListRoomId({ page = 0, size = 999, ...param } = {}) {
+  addUser: (userId, roomId) => {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi(
-          "get",
-          combineUrlParams(`${API.room}/list-room-id`, {
-            page,
-            size,
-            ...param,
-          }),
+          "post",
+          combineUrlParams(`${API.room}/join/${roomId}/${userId}`, {}),
           {}
         )
         .then((x) => {
@@ -25,4 +21,24 @@ export default {
         });
     });
   },
+  // getListRoomId({ page = 0, size = 999, ...param } = {}) {
+  //   return new Promise((resolve, reject) => {
+  //     clientUtils
+  //       .requestApi(
+  //         "get",
+  //         combineUrlParams(`${API.room}/list-room-id`, {
+  //           page,
+  //           size,
+  //           ...param,
+  //         }),
+  //         {}
+  //       )
+  //       .then((x) => {
+  //         resolve(x);
+  //       })
+  //       .catch((e) => {
+  //         reject(e);
+  //       });
+  //   });
+  // },
 };

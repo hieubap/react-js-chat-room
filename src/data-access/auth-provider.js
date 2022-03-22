@@ -6,7 +6,7 @@ export default {
   login(body, api) {
     return new Promise((resolve, reject) => {
       clientUtils
-        .requestApi("post", `${api}/login`, body, true)
+        .requestApi("post", `${API.account}/login`, body, true)
         .then((x) => {
           resolve(x);
         })

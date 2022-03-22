@@ -1,4 +1,5 @@
 import { getState } from "@src/redux";
+import moment from "moment";
 import clientUtils from "./client-utils";
 
 const combineUrlParams = (url = "", params = {}) => {
@@ -25,6 +26,30 @@ export const parseParams = () => {
     output[arr[0]] = arr[1];
   });
   return output;
+};
+export const momentFromNow = (m) => {
+  const date = moment(m);
+  const fy = date.year();
+  const fM = date.month();
+  const fd = date.day();
+  const fh = date.hour();
+  const fm = date.minute();
+  const fs = date.second();
+
+  const now = moment();
+  const ny = now.year();
+  const nM = now.month();
+  const nd = now.day();
+  const nh = now.hour();
+  const nm = now.minute();
+  const ns = now.second();
+
+  if (ny - fy > 0) return `${ny - fy} năm`;
+  if (nM - fM > 0) return `${nM - fM} tháng`;
+  if (nd - fd > 0) return `${nd - fd} ngày`;
+  if (nh - fh > 0) return `${nh - fh} giờ`;
+  if (nm - fm > 0) return `${nm - fm} phút`;
+  if (ns - fs > 0) return `${ns - fs} giây`;
 };
 
 const timeFromNow = (fromDate, format) => {

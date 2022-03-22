@@ -16,6 +16,7 @@ import resManager from "./resManager";
 import review from "./review";
 import team from "./team";
 import user from "./user";
+import socket from "./socket";
 
 export {
   auth,
@@ -35,4 +36,5 @@ export {
   review,
   team,
   user,
+  socket,
 };

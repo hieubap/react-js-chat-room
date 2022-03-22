@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./pages";
 import stores from "./redux";
 import LngProvider from "@lng";
+import "react-toastify/dist/ReactToastify.css";
 
 const Root = () => {
   return (

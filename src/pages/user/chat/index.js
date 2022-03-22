@@ -488,7 +488,7 @@ const Chat = (props) => {
               <div className="gx-status-pos">
                 <Avatar
                   id="avatar-button"
-                  src={getImg(auth.avatar)}
+                  src={getImg(auth?.avatar)}
                   // "https://via.placeholder.com/150x150"
                   className="gx-size-50"
                   alt=""

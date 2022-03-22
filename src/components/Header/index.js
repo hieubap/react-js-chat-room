@@ -91,37 +91,14 @@ const Header = ({ auth, historySearch, saveHistory, _logout, getListPost }) => {
               </Link>
             </li>
 
-            {auth?.userId &&
-              getRoutes()
-                // .filter(
-                //   (item) =>
-                //     (!item.role || item.role === auth?.role) &&
-                //     (!item.ignore || item.ignore != auth?.role)
-                // )
-                .map((item, index) => {
-                  if (item.children && item.children?.length > 0) {
-                    return (
-                      <li key={index} className="header__navbar-fun">
-                        <Link
-                          to={item.path || "#"}
-                          className="header__navbar-fun-link"
-                        >
-                          {item.title}
-                          <i className="header__navbar-fun-link-icon fas fa-chevron-down"></i>
-                        </Link>
-                        <ul className="header__navbar-fun-list">
-                          {item.children?.map((child, idx) => (
-                            <li
-                              key={idx}
-                              className="header__navbar-fun-list-link"
-                            >
-                              <a href={child.path || "/"}>{child.title}</a>
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    );
-                  }
+            {getRoutes()
+              // .filter(
+              //   (item) =>
+              //     (!item.role || item.role === auth?.role) &&
+              //     (!item.ignore || item.ignore != auth?.role)
+              // )
+              .map((item, index) => {
+                if (item.children && item.children?.length > 0) {
                   return (
                     <li key={index} className="header__navbar-fun">
                       <Link
@@ -129,10 +106,32 @@ const Header = ({ auth, historySearch, saveHistory, _logout, getListPost }) => {
                         className="header__navbar-fun-link"
                       >
                         {item.title}
+                        <i className="header__navbar-fun-link-icon fas fa-chevron-down"></i>
                       </Link>
+                      <ul className="header__navbar-fun-list">
+                        {item.children?.map((child, idx) => (
+                          <li
+                            key={idx}
+                            className="header__navbar-fun-list-link"
+                          >
+                            <a href={child.path || "/"}>{child.title}</a>
+                          </li>
+                        ))}
+                      </ul>
                     </li>
                   );
-                })}
+                }
+                return (
+                  <li key={index} className="header__navbar-fun">
+                    <Link
+                      to={item.path || "#"}
+                      className="header__navbar-fun-link"
+                    >
+                      {item.title}
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
           <div className="header__search">
             <div className="header__search-input-wrap">

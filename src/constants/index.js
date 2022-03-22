@@ -3,7 +3,7 @@ export const ROLES = {
 };
 
 export const API = {
-  account: "/user",
+  account: "/account",
   like: "/like",
   comment: "/comment",
 
@@ -17,4 +17,6 @@ export const API = {
   review: "/review",
   team: "/team",
   user: "/user",
+
+  room: "/room",
 };

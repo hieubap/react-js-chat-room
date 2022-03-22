@@ -1,6 +1,8 @@
 import { message } from "antd";
 import authProvider from "@data-access/auth-provider";
 import clientUtils from "@src/utils/client-utils";
+import { toast } from "react-toastify";
+import accountProvider from "@src/data-access/account-provider";
 export default {
   state: {
     auth: (() => {
@@ -88,6 +90,63 @@ export default {
         auth,
       });
       localStorage.setItem("auth", JSON.stringify(auth));
+    },
+    onLogin: (payload, state) => {
+      return new Promise((resolve, reject) => {
+        authProvider
+          .login(payload)
+          .then((res) => {
+            if (res && res.code === 0) {
+              localStorage.setItem("auth", JSON.stringify(res?.data));
+              toast.success("Đăng nhập thành công");
+              dispatch.auth.updateData({ auth: res.data });
+              // setTimeout(() => {
+              //   window.location.reload();
+              // }, 5000);
+
+              resolve(res);
+            } else {
+              toast.error(res.message);
+              reject(res);
+            }
+          })
+          .catch((e) => {
+            reject(e);
+          });
+      });
+    },
+    onRegister: (payload, state) => {
+      return new Promise((resolve, reject) => {
+        authProvider
+          .register(payload)
+          .then((res) => {
+            if (res && res.code === 0) {
+              toast.success(
+                "Đăng ký thành công. Vui lòng đăng nhập vào hệ thống"
+              );
+              resolve(res);
+            } else {
+              toast.error(res.message);
+              reject(res);
+            }
+          })
+          .catch(reject);
+      });
+    },
+    updateAvatar: (filePath, { auth: { auth } }) => {
+      accountProvider.changeAvatar({ avatar: filePath }).then((res) => {
+        if (res && res.code == 0) {
+          dispatch.auth.updateData({
+            auth: { ...auth, avatar: filePath },
+          });
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({ ...auth, avatar: filePath })
+          );
+
+          toast.success("Đổi ảnh đại diện thành công");
+        }
+      });
     },
   }),
 };

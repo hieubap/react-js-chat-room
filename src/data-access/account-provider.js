@@ -25,4 +25,16 @@ export default {
         });
     });
   },
+  changeAvatar: ({ avatar } = {}) => {
+    return new Promise((resolve, reject) => {
+      clientUtils
+        .requestApi("put", `${API.account}/avatar`, { avatar })
+        .then((x) => {
+          resolve(x);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  },
 };
