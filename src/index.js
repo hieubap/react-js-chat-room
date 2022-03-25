@@ -7,14 +7,13 @@ import "./style.scss";
 
 import PublicLayout from "@layouts/public";
 
-
 const Root = () => {
   return (
     <Provider store={stores}>
       <BrowserRouter>
         <Switch>
           <Route path="/p" render={(props) => <PublicLayout {...props} />} />
-          <Redirect from="*" to="/p/home" />
+          <Redirect to="/p/home" />
         </Switch>
       </BrowserRouter>
     </Provider>

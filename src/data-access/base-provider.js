@@ -2,7 +2,7 @@ import { combineUrlParams } from "@utils/common";
 import clientUtils from "@utils/client-utils";
 
 export default (API = "") => ({
-  _search({ page = 0, size = 10, ...param }) {
+  search({ page = 0, size = 10, ...param }) {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi(
@@ -23,7 +23,7 @@ export default (API = "") => ({
         });
     });
   },
-  _detail(id) {
+  detail(id) {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi("get", `${API}/${id}`, {})
@@ -35,7 +35,7 @@ export default (API = "") => ({
         });
     });
   },
-  _post(body) {
+  post(body) {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi("post", API, body)
@@ -47,7 +47,7 @@ export default (API = "") => ({
         });
     });
   },
-  _put(body, id) {
+  put(body, id) {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi("put", `${API}/${id}`, body)
@@ -59,7 +59,7 @@ export default (API = "") => ({
         });
     });
   },
-  _delete(id) {
+  delete(id) {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi("delete", `${API}/${id}`, {})

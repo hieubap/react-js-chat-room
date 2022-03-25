@@ -1,8 +1,8 @@
-import { checkRole } from "@utils";
+import { checkRole } from "@utils/index";
 import React from "react";
 import { connect } from "react-redux";
 
-const UnAuth = <div></div>; //React.lazy(() => import("pages/unAuth"));
+const UnAuth = <div>Không đủ quyền</div>; //React.lazy(() => import("pages/unAuth"));
 
 const Authorization = ({ auth, children, accessRoles, isCheckRoute = false }) => {
   const roles = [];
@@ -13,7 +13,7 @@ const Authorization = ({ auth, children, accessRoles, isCheckRoute = false }) =>
   }
   if (isCheckRoute) return <UnAuth />;
 
-  return null;
+  return <div>Không đủ quyền</div>;
 };
 
 const mapState = (state) => ({

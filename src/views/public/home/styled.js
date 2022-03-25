@@ -1,17 +1,35 @@
+import React from "react";
 import styled from "styled-components";
 
-export const StyledWrapper = styled.div`
-  i {
-    &.ni-like-2 {
-      font-size: 18px;
-      transform: translateY(2px);
+export const WrapperStyled = styled.div`
+  background-color: rgb(249, 249, 249);
+  .container {
+    &__adver {
+      flex: 1;
+      text-align: center;
+      position: fixed;
+      &-left,
+      &-right {
+        position: fixed;
+        top: 50px;
+        img {
+          width: 300px;
+          height: 600px;
+        }
+      }
+      &-left {
+        left: 50px;
+      }
+      &-right {
+        right: 50px;
+      }
     }
-  }
-  .new-post {
-    background-color: #ddd;
-    padding: 5px;
-    border-radius: 15px;
-    text-align: center;
-    cursor: pointer;
+    &__body {
+      display: flex;
+      justify-content: center;
+      &--main {
+        width: 40%;
+      }
+    }
   }
 `;

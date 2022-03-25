@@ -2,13 +2,13 @@ export const UrlServer = () => {
   const domain = global.origin;
   const localhost = true;
 
-  switch (domain) {
-    case "http://45.13.132.247:1234": // server host
-      return "http://45.13.132.247:8082";
-    case "http://localhost:3000": // localhost
-      return localhost ? "http://localhost:8880" : "http://45.13.132.247:8082";
-  }
-  return localhost ? "http://localhost:8880" : "http://45.13.132.247:8082";
+  // switch (domain) {
+  //   case "http://45.13.132.247:1234": // server host
+  //     return "http://45.13.132.247:8082";
+  //   case "http://localhost:3000": // localhost
+  //     return localhost ? "http://localhost:8880" : "http://45.13.132.247:8800";
+  // }
+  return localhost ? "http://localhost:8000" : "http://45.13.132.247:8800";
 };
 
 export default {

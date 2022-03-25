@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 
 // public
 const Home = React.lazy(() => import("./public/home"));
+const Chat = React.lazy(() => import("./public/chat"));
 
 const Page =
   (Component, roles = []) =>
@@ -20,5 +21,9 @@ export const routes_public = [
   {
     path: "/p/home",
     component: Page(Home, []),
+  },
+  {
+    path: "/p/chat",
+    component: Page(Chat, []),
   },
 ];

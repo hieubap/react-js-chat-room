@@ -1,4 +1,4 @@
-import dataCache from "utils/data-cache";
+import dataCache from "@utils/data-cache";
 
 export default {
   state: {
