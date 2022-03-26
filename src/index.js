@@ -7,13 +7,16 @@ import "./style.scss";
 
 import PublicLayout from "@layouts/public";
 
+import Oauth from "./views/oauth";
+
 const Root = () => {
   return (
     <Provider store={stores}>
       <BrowserRouter>
         <Switch>
+          <Route exact path="/sso" render={(props) => <Oauth {...props} />} />
           <Route path="/p" render={(props) => <PublicLayout {...props} />} />
-          <Redirect to="/p/home" />
+          {/* <Redirect to="/p/home" /> */}
         </Switch>
       </BrowserRouter>
     </Provider>

@@ -27,7 +27,7 @@ const WrapperLogin = styled.div`
         border-radius: 5px;
         height: 35px;
         border: 1px solid #ccc;
-        padding: 15px;
+        padding: 0 15px;
         outline: none;
         text-align: left;
         &:hover,
@@ -217,22 +217,40 @@ const AuthModal = ({ onLogin, onRegister, auth }) => {
           </div>
         </div>
         {state.isLogin ? (
-          <div className="md-login-signup">
-            Not a member yet?
-            <span onClick={() => setState({ isLogin: false, isSubmit: false })}>
-              Sign Up
-            </span>
-          </div>
-        ) : (
-          <div className="md-login-switch">
-            <div
-              className="md-login-switch-text"
-              onClick={() => setState({ isLogin: true, isSubmit: false })}
-            >
-              Login
+          <>
+            <div className="md-login-signup">
+              Not a member yet?
+              <span
+                onClick={() => setState({ isLogin: false, isSubmit: false })}
+              >
+                Sign Up
+              </span>
             </div>
-            <span className="md-login-switch-effect"></span>
-          </div>
+            <div className="md-login-switch">
+              <div
+                className="md-login-switch-text"
+                onClick={() =>
+                  (window.location.href =
+                    "http://localhost:8000/auth-server/oauth/authorize?response_type=code&client_id=hoang&scope=read&state=2K4ZDYkjCYQf6u5NPJYGDtOtxmUkgI73WIcI-PJFe8k%3D&redirect_uri=http://localhost:3000")
+                }
+              >
+                Auth
+              </div>
+              <span className="md-login-switch-effect"></span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="md-login-switch">
+              <div
+                className="md-login-switch-text"
+                onClick={() => setState({ isLogin: true, isSubmit: false })}
+              >
+                Login
+              </div>
+              <span className="md-login-switch-effect"></span>
+            </div>
+          </>
         )}
       </WrapperLogin>
     </Modal>

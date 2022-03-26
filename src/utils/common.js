@@ -1,6 +1,17 @@
 import moment from "moment";
 import clientUtils from "./client-utils";
 
+const parseUrlParams = () => {
+  const { search } = window.location;
+  const arrParam = search.slice(1).split("&");
+  const param = {};
+  for (let i = 0; i < arrParam.length; i++) {
+    const pair = arrParam[i].split("=");
+    param[pair[0]] = pair[1];
+  }
+  return param;
+};
+
 const combineUrlParams = (url = "", params = {}) => {
   const keys = Object.keys(params);
   const paramUrl = keys
@@ -88,4 +99,4 @@ String.prototype.formatPrice = function () {
   return this;
 };
 
-export { combineUrlParams, timeFromNow };
+export { combineUrlParams, parseUrlParams, timeFromNow };

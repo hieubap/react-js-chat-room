@@ -8,14 +8,17 @@ export default {
       clientUtils
         .requestApi(
           "post",
-          combineUrlParams(`/auth-server/oauth/authorize`, {
-            response_type: "code",
-            client_id: "hoang",
-            scope: "read",
-            state: "2K4ZDYkjCYQf6u5NPJYGDtOtxmUkgI73WIcI-PJFe8k%3D",
-            redirect_uri: "http://localhost:3000",
-          }),
-          {},
+          combineUrlParams(
+            `/chat-server/api/v1/login`
+            // {
+            //   response_type: "code",
+            //   client_id: "hoang",
+            //   scope: "read",
+            //   state: "2K4ZDYkjCYQf6u5NPJYGDtOtxmUkgI73WIcI-PJFe8k%3D",
+            //   redirect_uri: "http://localhost:3000",
+            // }
+          ),
+          body,
           true
         )
         .then((x) => {
