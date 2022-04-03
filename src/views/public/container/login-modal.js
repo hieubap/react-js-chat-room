@@ -231,7 +231,7 @@ const AuthModal = ({ onLogin, onRegister, auth }) => {
                 className="md-login-switch-text"
                 onClick={() =>
                   (window.location.href =
-                    "http://localhost:8000/auth-server/oauth/authorize?response_type=code&client_id=hoang&scope=read&state=2K4ZDYkjCYQf6u5NPJYGDtOtxmUkgI73WIcI-PJFe8k%3D&redirect_uri=http://localhost:3000")
+                    "http://localhost:8000/auth-server/oauth/authorize?response_type=code&client_id=hoang&scope=read&state=2K4ZDYkjCYQf6u5NPJYGDtOtxmUkgI73WIcI-PJFe8k%3D&redirect_uri=http://localhost:3000/sso")
                 }
               >
                 Auth

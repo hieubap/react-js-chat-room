@@ -26,7 +26,7 @@ export default {
     onLogin: (payload, state) => {
       return new Promise((resolve, reject) => {
         authProvider
-          .login({ ...payload, redirectURI: "http://localhost:3000" })
+          .login({ ...payload, redirectURI: "http://localhost:3000/sso" })
           .then((res) => {
             if (res && res.code === 0) {
               localStorage.setItem("auth", JSON.stringify(res?.data));
