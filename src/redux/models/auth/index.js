@@ -8,7 +8,7 @@ export default {
         let data = localStorage.getItem("auth") || "";
         if (data) {
           const parseData = JSON.parse(data);
-          clientUtils.auth = "Bearer " + parseData.token;
+          clientUtils.auth = "Bearer " + parseData.access_token;
           return parseData;
         }
       } catch (error) {
@@ -28,19 +28,14 @@ export default {
         authProvider
           .login({ ...payload, redirectURI: "http://localhost:3000/sso" })
           .then((res) => {
-            if (res && res.code === 0) {
-              localStorage.setItem("auth", JSON.stringify(res?.data));
-              toast.success("Đăng nhập thành công");
-              dispatch.auth.updateData({ auth: res.data });
-              // setTimeout(() => {
-              //   window.location.reload();
-              // }, 5000);
+            localStorage.setItem("auth", JSON.stringify(res));
+            toast.success("Đăng nhập thành công");
+            dispatch.auth.updateData({ auth: res });
+            // setTimeout(() => {
+            //   window.location.reload();
+            // }, 5000);
 
-              resolve(res);
-            } else {
-              toast.error(res.message);
-              reject(res);
-            }
+            resolve(res);
           })
           .catch((e) => {
             reject(e);

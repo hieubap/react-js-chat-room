@@ -7,6 +7,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stomp-websocket";
 import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
+import client from '@utils/client-utils'
 // import { message } from "antd";
 
 const refTimeout = createRef();
@@ -34,10 +35,10 @@ export default {
       const { userId } = state.auth?.auth || {};
 
       function connect() {
-        socket = new SockJS("http://45.13.132.247:8800/ws"); // api/v1
+        socket = new SockJS("http://localhost:8085/chat-server/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
-          { chatRoomId: 1, userId, roomId: 10, access: "ok" },
+          { Authorization : client.auth},
           stompSuccess,
           stompFailure
         );

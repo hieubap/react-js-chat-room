@@ -7,11 +7,9 @@ const Public = () => {
   const { connect } = useDispatch().socket;
   const { auth } = useSelector((state) => state.auth);
 
-  // useEffect(() => {
-  //   if (auth?.userId) {
-  //     connect();
-  //   }
-  // }, [auth]);
+  useEffect(() => {
+    connect();
+  }, [auth]);
 
   return (
     <>
