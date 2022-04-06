@@ -20,7 +20,6 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
 
   return (
     <WrapperStyled>
-      <AuthModal />
       <div className="container__adver-left">
         <a href="" className="container__adver-link">
           <img

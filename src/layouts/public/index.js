@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Route, Switch } from "react-router";
 import Header from "../header";
 import { WrapperLayoutPublic } from "./styled";
+import AuthModal from "../../views/public/container/login-modal";
 
 const Public = () => {
   const {
@@ -26,6 +27,7 @@ const Public = () => {
     <WrapperLayoutPublic>
       <Header></Header>
       <div className="main-content">
+        <AuthModal />
         <Switch>
           {routes_public.map((item, index) => (
             <Route key={index} path={item.path} component={item.component} />

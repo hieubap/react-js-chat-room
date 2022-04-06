@@ -26,7 +26,7 @@ const Root = () => {
           <Switch>
             <Route exact path="/sso" render={(props) => <Oauth {...props} />} />
             <Route path="/p" render={(props) => <PublicLayout {...props} />} />
-            {/* <Redirect to="/p/home" /> */}
+            <Redirect to="/p/home" />
           </Switch>
         </BrowserRouter>
       </Provider>

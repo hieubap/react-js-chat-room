@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { WrapperStyled } from "./styled";
 
 const routes = [
-  { title: "Home", path: "/p/home", classIcon: "fa-brands fa-app-store" },
-  { title: "Home", path: "/p/home", classIcon: "fa-brands fa-app-store" },
+  // { title: "Home", path: "/p/home", classIcon: "fa-brands fa-app-store" },
+  // { title: "Home", path: "/p/home", classIcon: "fa-brands fa-app-store" },
   {
     title: "Bảo mật và đăng nhập",
     path: "/p/setting/login-secure",

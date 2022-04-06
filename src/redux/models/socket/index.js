@@ -75,6 +75,13 @@ export default {
             }
             console.log("received body: ", res);
           });
+
+          stompClient.subscribe("/broker/public", ({ body }) => {
+            const res = JSON.parse(body);
+            if (res.type === "coords") {
+            }
+            console.log("received body: ", res);
+          });
           stompClient.send("/app/list.room." + userId, {}, {});
         }
       };
