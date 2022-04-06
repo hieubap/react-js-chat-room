@@ -10,12 +10,14 @@ export const StyledModal = styled.div`
     height: 100%;
     background: black;
     opacity: 0.5;
+    z-index: 2;
   }
   .modal-content {
     position: fixed;
     width: 100%;
     height: 100vh;
     overflow-y: scroll;
+    z-index: 3;
     &-layer {
       position: absolute;
       width: ${(props) => props.width + "px"};

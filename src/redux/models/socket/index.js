@@ -34,7 +34,7 @@ export default {
       const { userId } = state.auth?.auth || {};
 
       function connect() {
-        socket = new SockJS("http://45.13.132.247:8800/ws"); // api/v1
+        socket = new SockJS("http://localhost:8800/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
           { chatRoomId: 1, userId, roomId: 10, access: "ok" },
@@ -51,6 +51,9 @@ export default {
             const res = JSON.parse(body);
             if (res.type === "listRoom") {
               dispatch.socket.updateData({ listRoom: res.data });
+              for (let i = 0; i < res.data?.length; i++) {
+                dispatch.socket.getListMessage(res.data[i]?.id);
+              }
             } else if (res.type === "join") {
               dispatch.socket.updateListRoom(res.data);
             } else if (res.type === "warning") {
@@ -61,9 +64,14 @@ export default {
                 messageId: res.data?.id,
                 roomId: res.data?.roomId,
               });
+            } else if (res.type === "emoji") {
+              dispatch.socket.updateEmoji(res.data);
+            } else if (res.type === "emoji-remove") {
+              dispatch.socket.updateEmojiRemove(res.data);
             } else if (res.type === "lastSeen") {
-              console.log("updatelastseen");
               dispatch.socket.updateLastSeen(res.data);
+            } else if (res.type === "logout-device") {
+              dispatch.deviceInfo.logoutDevice(res.data);
             }
             console.log("received body: ", res);
           });
@@ -78,14 +86,14 @@ export default {
       connect();
     },
     createRoom: (_, { auth: { auth } }) => {
-      roomProvider._post({ adminId: auth?.userId }).then((res) => {
+      roomProvider.post({ adminId: auth?.userId }).then((res) => {
         if (res && res.code === 0) {
           dispatch.socket.updateListRoom(res.data);
         }
       });
     },
     getAllUser: (_) => {
-      accountProvider._search({ page: 0, size: 99 }).then((res) => {
+      accountProvider.search({ page: 0, size: 99 }).then((res) => {
         if (res && res.code === 0) {
           dispatch.socket.updateData({ listAllUser: res.data });
         }
@@ -149,6 +157,64 @@ export default {
       }
       dispatch.socket.updateData({ listMessage: [...newMessages] });
     },
+    updateEmoji: (payload, state) => {
+      const { listMessage, currentRoomId } = state.socket;
+      const newMessages = Object.assign([], listMessage);
+
+      if (currentRoomId != payload.roomId) {
+        return;
+      }
+
+      const indexMessage = listMessage.findIndex(
+        (item) => item.id === payload.messageId
+      );
+
+      if (indexMessage != -1) {
+        const messageEmoji = newMessages[indexMessage];
+        if (messageEmoji.listEmoji) {
+          messageEmoji.listEmoji = [...messageEmoji.listEmoji, payload];
+        } else {
+          messageEmoji.listEmoji = [payload];
+        }
+        newMessages.splice(indexMessage, 1, messageEmoji);
+      }
+      dispatch.socket.updateData({ listMessage: [...newMessages] });
+    },
+    updateEmojiRemove: (payload, state) => {
+      const { listMessage, currentRoomId } = state.socket;
+      const newMessages = Object.assign([], listMessage);
+
+      if (currentRoomId != payload.roomId) {
+        return;
+      }
+
+      const indexMessage = listMessage.findIndex(
+        (item) => item.id === payload.messageId
+      );
+
+      if (indexMessage != -1) {
+        const messageEmoji = newMessages[indexMessage];
+        messageEmoji.listEmoji = messageEmoji.listEmoji?.filter(
+          (i) => i.userId != payload.userId
+        );
+      }
+      dispatch.socket.updateData({ listMessage: [...newMessages] });
+    },
+    sendEmoji: (
+      { type, messageId },
+      { auth: { auth }, socket: { stompClient, currentRoomId } }
+    ) => {
+      stompClient.send(
+        `/app/send.emoji`,
+        {},
+        JSON.stringify({
+          userId: auth?.userId,
+          messageId,
+          type,
+          roomId: currentRoomId,
+        })
+      );
+    },
     scrollToBottom: () => {
       if (refTimeout.current) {
         clearTimeout(refTimeout.current);
@@ -161,20 +227,48 @@ export default {
     },
     getListMessage: (
       roomId,
-      { auth: { auth }, socket: { currentRoomId, stompClient } }
+      {
+        auth: { auth },
+        socket: { currentRoomId, stompClient, listMessage, ...rest },
+      }
     ) => {
-      messageProvider
-        ._search({ roomId, sort: "createdAt,asc", size: 99 })
-        .then((res) => {
-          if (res && res.code === 0) {
-            dispatch.socket.updateData({ listMessage: res.data });
-            dispatch.socket.sendlastSeen({
-              messageId: res.data[res.data?.length - 1]?.id,
-              roomId: res.data[res.data?.length - 1]?.roomId,
-            });
-            dispatch.socket.scrollToBottom();
-          }
+      if (rest[`messageRoom${roomId}`]) {
+        dispatch.socket.updateData({
+          listMessage: rest[`messageRoom${roomId}`],
         });
+        setTimeout(() => {
+          dispatch.socket.scrollToBottom();
+          const listMess = rest[`messageRoom${roomId}`];
+          dispatch.socket.sendlastSeen({
+            messageId: listMess[listMess?.length - 1]?.id,
+            roomId: listMess[listMess?.length - 1]?.roomId,
+          });
+        }, 100);
+      } else {
+        dispatch.socket.updateData({
+          [`messageRoom${roomId}`]: [],
+        });
+        messageProvider
+          .search({ roomId, sort: "createdAt,desc", size: 20 })
+          .then((res) => {
+            if (res && res.code === 0) {
+              if (roomId === currentRoomId) {
+                dispatch.socket.updateData({
+                  listMessage: res.data?.reverse(),
+                  [`messageRoom${roomId}`]: res.data?.reverse(),
+                });
+              } else
+                dispatch.socket.updateData({
+                  [`messageRoom${roomId}`]: res.data?.reverse(),
+                });
+              dispatch.socket.sendlastSeen({
+                messageId: res.data[res.data?.length - 1]?.id,
+                roomId: res.data[res.data?.length - 1]?.roomId,
+              });
+              dispatch.socket.scrollToBottom();
+            }
+          });
+      }
     },
     sendlastSeen: (
       { messageId, roomId },
@@ -189,7 +283,7 @@ export default {
       }
     },
     sendMessage: (
-      { content } = {},
+      { content, type } = {},
       { auth: { auth }, socket: { stompClient, currentRoomId } }
     ) => {
       if (!currentRoomId) {
@@ -207,12 +301,12 @@ export default {
           fromId: auth?.userId,
           roomId: currentRoomId,
           content,
+          type,
         })
       );
     },
     // remove
     changeAvatar: (file, { auth: { auth } }) => {
-      console.log(auth, "auth..");
       fileProvider
         .upload(file)
         .then((fileDetail) => {

@@ -1,4 +1,5 @@
 import authProvider from "@data-access/auth-provider";
+import { getAuditInfo } from "@src/utils/common";
 import clientUtils from "@utils/client-utils";
 import { toast } from "react-toastify";
 export default {
@@ -23,10 +24,14 @@ export default {
     },
   },
   effects: (dispatch) => ({
-    onLogin: (payload, state) => {
+    onLogin: (payload, { deviceInfo: { info } }) => {
+      if (!info?.ip) return;
       return new Promise((resolve, reject) => {
         authProvider
-          .login({ ...payload, redirectURI: "http://localhost:3000" })
+          .login({
+            ...payload,
+            deviceInfo: info,
+          })
           .then((res) => {
             if (res && res.code === 0) {
               localStorage.setItem("auth", JSON.stringify(res?.data));
@@ -65,20 +70,24 @@ export default {
           .catch(reject);
       });
     },
-    // updateAvatar: (filePath, { auth: { auth } }) => {
-    //   authProvider.changeAvatar({ avatar: filePath }).then((res) => {
-    //     if (res && res.code == 0) {
-    //       dispatch.auth.updateData({
-    //         auth: { ...auth, avatar: filePath },
-    //       });
-    //       localStorage.setItem(
-    //         "auth",
-    //         JSON.stringify({ ...auth, avatar: filePath })
-    //       );
+    onLogout: (payload, state) => {
+      localStorage.clear();
+      window.location.href = "/p/home";
+    },
+    changeAvatar: (file, { auth: { auth } }) => {
+      authProvider.changeAvatar(file).then((res) => {
+        if (res && res.code == 0) {
+          dispatch.auth.updateData({
+            auth: { ...auth, avatar: res.data?.avatar },
+          });
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({ ...auth, avatar: res.data?.avatar })
+          );
 
-    //       toast.success("Đổi ảnh đại diện thành công");
-    //     }
-    //   });
-    // },
+          toast.success("Đổi ảnh đại diện thành công");
+        }
+      });
+    },
   }),
 };

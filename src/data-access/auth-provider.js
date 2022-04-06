@@ -9,7 +9,8 @@ export default {
         .requestApi(
           "post",
           combineUrlParams(
-            `/chat-server/api/v1/login`
+            `/account/login`
+            // `/chat-server/api/v1/login`
             // {
             //   response_type: "code",
             //   client_id: "hoang",
@@ -33,6 +34,21 @@ export default {
     return new Promise((resolve, reject) => {
       clientUtils
         .requestApi("post", `${API.account}/register`, body, true)
+        .then((x) => {
+          resolve(x);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  },
+  changeAvatar(file) {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      clientUtils
+        .upload("put", `${API.account}/avatar`, formData)
         .then((x) => {
           resolve(x);
         })

@@ -7,4 +7,5 @@ export const API = {
   room: "/room",
   message: "/message",
   post: "/post",
+  deviceInfo: "/device-info",
 };

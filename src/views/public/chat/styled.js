@@ -9,7 +9,14 @@ export const WrapperStyled = styled.div`
     background-color: white;
     .room {
       &-header {
-        height: 100px;
+        height: 90px;
+        &-title {
+          text-align: center;
+          font-weight: 600;
+          font-size: 18px;
+          margin: 0 0 -7px 0;
+          padding-top: 7px;
+        }
         &-top {
           height: 60px;
           display: flex;
@@ -17,6 +24,11 @@ export const WrapperStyled = styled.div`
           padding: 0 10px;
           input[type="file"] {
             display: none;
+          }
+          i {
+            font-size: 20px;
+            margin-left: auto;
+            cursor: pointer;
           }
           &-img {
             width: 48px;
@@ -42,7 +54,7 @@ export const WrapperStyled = styled.div`
       &-group {
         overflow: scroll;
         border-top: 1px solid #ccc;
-        height: calc(100% - 100px);
+        height: calc(100% - 90px);
         .room-item {
           padding: 5px 5px 5px 15px;
           display: flex;
@@ -60,7 +72,7 @@ export const WrapperStyled = styled.div`
           }
           &-content {
             padding: 0 0 0 15px;
-            width: calc(100% - 48px);
+            width: calc(100% - 68px);
             &-user {
               font-size: 16px;
               font-weight: 500;
@@ -94,6 +106,7 @@ export const WrapperStyled = styled.div`
     background: white;
     width: 60%;
     border-left: 1px solid #00c;
+    position: relative;
     &-top {
       height: 60px;
       display: flex;
@@ -118,14 +131,53 @@ export const WrapperStyled = styled.div`
       }
     }
     &-mid {
-      height: calc(100% - 100px);
+      height: calc(100% - 110px);
       overflow-y: scroll;
+
+      &-visible-file {
+        bottom: 45px;
+        height: calc(100% - 200px);
+      }
       .content-message {
         &-item {
           padding: 6px 10px;
           display: flex;
           .wrapper-data {
             max-width: 45%;
+
+            .list-image {
+              display: flex;
+              flex-wrap: wrap;
+              max-width: 312px;
+              &-item {
+                margin: 0 2px;
+                height: 100px;
+                width: 100px;
+                overflow: hidden;
+                border-radius: 10px;
+                cursor: pointer;
+
+                img {
+                  transition: all 0.4s;
+                  transform: scale(1);
+                  &.auto-w {
+                    width: auto;
+                    height: 100%;
+                  }
+                  &.auto-h {
+                    height: auto;
+                    width: 100%;
+                  }
+                }
+
+                :hover {
+                  img {
+                    transform: scale(1.1);
+                    filter: brightness(80%)
+                  }
+                }
+              }
+            }
             &-content {
               padding: 7px 10px;
               border-radius: 16px;
@@ -134,16 +186,19 @@ export const WrapperStyled = styled.div`
                 position: absolute;
                 /* max-width: 34px;
                 min-width: 20px; */
-                width: 28px;
+                /* width: 28px; */
                 height: 18px;
                 background: white;
                 right: -1px;
-                bottom: -7px;
+                bottom: -12px;
                 box-shadow: 0 0 2px #aaa;
                 border-radius: 7px;
                 display: flex;
+                align-items: center;
                 padding: 0 2px;
                 div:first-child {
+                  display: flex;
+                  align-items: center;
                   img {
                     width: 14px;
                     height: 14px;
@@ -152,20 +207,20 @@ export const WrapperStyled = styled.div`
                 }
                 div:last-child {
                   font-size: 10px;
-                  margin-top: -2px;
                   margin-left: 3px;
                   color: #65676b;
                   line-height: 20px;
                 }
                 &-option {
                   position: absolute;
-                  right: -140px;
+                  right: -170px;
                   top: 5px;
                   display: flex;
                   display: none;
                   cursor: pointer;
                   &-send {
-                    right: 50px;
+                    left: -170px;
+                    right: 0;
                   }
                   &-wrapper {
                     margin-left: 3px;
@@ -192,14 +247,21 @@ export const WrapperStyled = styled.div`
               }
             }
             .user-name-send {
-              font-size: 12px;
+              font-size: 10px;
               color: #666;
             }
             .list-last-seen {
               display: flex;
+              align-items: center;
 
               &-send {
-                flex-direction: row-reverse;
+                justify-content: end;
+                /* flex-direction: row-reverse; */
+              }
+
+              &-like {
+                margin-top: 12px;
+                margin-bottom: 4px;
               }
 
               &-item {
@@ -211,6 +273,16 @@ export const WrapperStyled = styled.div`
                   margin-top: -8px;
                   width: 100%;
                   height: 100%;
+                }
+                &-content {
+                  white-space: nowrap;
+                  font-size: 11px;
+                  margin-right: 25px;
+                }
+                &-child {
+                  width: 100%;
+                  height: 100%;
+                  margin-top: -2px;
                 }
               }
             }
@@ -224,6 +296,9 @@ export const WrapperStyled = styled.div`
           .main-center-top-img {
             width: 32px;
             height: 32px;
+          }
+          &.content-message-item-react {
+            margin-bottom: 15px;
           }
           &-receive {
             justify-content: start;
@@ -307,6 +382,15 @@ export const WrapperStyled = styled.div`
       height: 40px;
       display: flex;
       align-items: center;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      &-visible-file {
+        bottom: 45px;
+        .bottom-input-message {
+          background: #eee;
+        }
+      }
       .bottom-tools {
         display: flex;
         width: 120px;
@@ -315,18 +399,68 @@ export const WrapperStyled = styled.div`
         }
       }
       .bottom-input-message {
-        padding: 0 20px;
-        width: calc(100% - 120px);
+        padding: 0px 0px 10px 5px;
+        margin: 0 15px;
+        width: calc(100% - 40px);
+        border-radius: 25px;
+        .message-file {
+          display: flex;
+          &-over {
+            overflow-x: scroll;
+            width: calc(100% - 30px);
+            margin: 0 10px;
+          }
+          &-item {
+            margin: 7px 5px;
+            position: relative;
+            img {
+              &.auto-w {
+                width: auto;
+                height: 100%;
+              }
+              &.auto-h {
+                height: auto;
+                width: 100%;
+              }
+            }
+            .file-item {
+              &_img {
+                height: 70px;
+                width: 70px;
+                overflow: hidden;
+                border-radius: 10px;
+              }
+              &_icon-remove {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                right: -6px;
+                background-color: white;
+                z-index: 10;
+                border-radius: 50%;
+                width: 15px;
+                height: 20px;
+                font-size: 15px;
+                padding-left: 5px;
+                box-shadow: 0 0 2px #888;
+                &:hover {
+                  background-color: #e0e0e0;
+                }
+              }
+            }
+          }
+        }
         input {
-          width: 100%;
+          width: calc(100% - 40px);
           outline: none;
           border: 1px solid #ccc;
           border-radius: 15px;
-          padding: 3px 15px;
+          padding: 7px 15px;
           background: #f9f9f9;
           display: inline-block;
           white-space: pre-wrap;
           overflow-wrap: break-word;
+          color: #444;
         }
       }
     }
@@ -368,6 +502,11 @@ export const WrapperStyled = styled.div`
           display: flex;
           align-items: center;
           cursor: pointer;
+          i {
+            font-size: 20px;
+            padding: 8px 9px;
+            background-color: #e0e0e0;
+          }
           &-img {
             width: 36px;
             height: 36px;
@@ -380,7 +519,7 @@ export const WrapperStyled = styled.div`
           }
           &-content {
             padding: 0 15px;
-            width: calc(100% - 48px);
+            width: calc(100% - 78px);
             &-user {
               font-size: 13px;
               font-weight: 500;
@@ -397,7 +536,7 @@ export const WrapperStyled = styled.div`
             }
           }
           :hover {
-            background-color: #ccc;
+            background-color: #f7f7f7;
           }
           &-active {
             background-color: blue;

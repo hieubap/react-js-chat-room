@@ -1,20 +1,30 @@
-import React, { useEffect } from "react";
-import { Route, Switch } from "react-router";
 import { routes_public } from "@views/routes";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Route, Switch } from "react-router";
+import Header from "../header";
+import { WrapperLayoutPublic } from "./styled";
 
 const Public = () => {
-  const { connect } = useDispatch().socket;
+  const {
+    deviceInfo: { getDeviceInfo },
+    socket: { connect },
+  } = useDispatch();
   const { auth } = useSelector((state) => state.auth);
 
-  // useEffect(() => {
-  //   if (auth?.userId) {
-  //     connect();
-  //   }
-  // }, [auth]);
+  useEffect(() => {
+    getDeviceInfo();
+  }, []);
+  useEffect(() => {
+    if (auth?.userId) {
+      console.log(auth, "auth");
+      connect();
+    }
+  }, [auth]);
 
   return (
-    <>
+    <WrapperLayoutPublic>
+      <Header></Header>
       <div className="main-content">
         <Switch>
           {routes_public.map((item, index) => (
@@ -22,7 +32,7 @@ const Public = () => {
           ))}
         </Switch>
       </div>
-    </>
+    </WrapperLayoutPublic>
   );
 };
 

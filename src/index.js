@@ -1,25 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import stores from "./redux";
 import "./style.scss";
+import "react-toastify/dist/ReactToastify.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "leaflet/dist/leaflet.css";
 
 import PublicLayout from "@layouts/public";
 
 import Oauth from "./views/oauth";
+import { toast, ToastContainer } from "react-toastify";
+import authProvider from "./data-access/auth-provider";
 
 const Root = () => {
   return (
-    <Provider store={stores}>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/sso" render={(props) => <Oauth {...props} />} />
-          <Route path="/p" render={(props) => <PublicLayout {...props} />} />
-          {/* <Redirect to="/p/home" /> */}
-        </Switch>
-      </BrowserRouter>
-    </Provider>
+    <>
+      <ToastContainer
+        position={toast.POSITION.BOTTOM_RIGHT}
+        autoClose={5000}
+      ></ToastContainer>
+      <Provider store={stores}>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/sso" render={(props) => <Oauth {...props} />} />
+            <Route path="/p" render={(props) => <PublicLayout {...props} />} />
+            {/* <Redirect to="/p/home" /> */}
+          </Switch>
+        </BrowserRouter>
+      </Provider>
+    </>
   );
 };
 
