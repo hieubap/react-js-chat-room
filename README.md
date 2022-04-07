@@ -1,3 +1,8 @@
+CLONE FROM (https://github.com/hieubap/base-react.git)
+
+backend sử dụng spring boot: microservice, socket ....
+git: (https://github.com/psfhoang/microservies)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
