@@ -13,6 +13,7 @@ export const UrlServer = () => {
 
 export default {
   auth: "",
+  token: "",
   serverApi: UrlServer(),
   requestApi(methodType, url, body, ignoreAuth) {
     return new Promise((resolve, reject) => {

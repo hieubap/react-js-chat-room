@@ -1,26 +1,22 @@
 import { routes_public } from "@views/routes";
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { Route, Switch } from "react-router";
+import AuthModal from "../../views/public/container/login-modal";
 import Header from "../header";
 import { WrapperLayoutPublic } from "./styled";
-import AuthModal from "../../views/public/container/login-modal";
 
-const Public = () => {
-  const {
-    deviceInfo: { getDeviceInfo },
-    socket: { connect },
-  } = useDispatch();
-  const { auth } = useSelector((state) => state.auth);
-
+const Public = ({ auth, getDeviceInfo, connectSocket }) => {
   useEffect(() => {
     getDeviceInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (auth?.userId) {
       console.log(auth, "auth");
-      connect();
+      connectSocket();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
 
   return (
@@ -38,4 +34,10 @@ const Public = () => {
   );
 };
 
-export default Public;
+export default connect(
+  ({ auth: { auth } }) => ({ auth }),
+  ({ deviceInfo: { getDeviceInfo }, socket: { connect: connectSocket } }) => ({
+    getDeviceInfo,
+    connectSocket,
+  })
+)(Public);

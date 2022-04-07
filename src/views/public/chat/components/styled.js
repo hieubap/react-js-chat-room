@@ -18,6 +18,8 @@ export const StyledModal = styled.div`
     height: 100vh;
     overflow-y: scroll;
     z-index: 3;
+    left: 0;
+    top: 0;
     &-layer {
       position: absolute;
       width: ${(props) => props.width + "px"};

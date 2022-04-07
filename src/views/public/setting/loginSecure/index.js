@@ -1,29 +1,9 @@
 import { momentFromNow } from "@src/utils/common";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import VerifyModal from "../../container/verify-modal";
 import List from "./list";
 import { WrapperStyled } from "./styled";
-
-const dataSource = [
-  {
-    name: "Máy tính Window",
-    address: "Ha Noi,Viet Nam",
-    broswer: "Chrome",
-    type: 1,
-  },
-  {
-    name: "Máy tính Window",
-    address: "Ha Noi,Viet Nam",
-    broswer: "Chrome",
-    type: 1,
-  },
-  {
-    name: "Máy tính Window",
-    address: "Ha Noi,Viet Nam",
-    broswer: "Chrome",
-    type: 1,
-  },
-];
 
 const LoginSecure = ({
   deviceInfo,
@@ -31,6 +11,11 @@ const LoginSecure = ({
   listCurrentUser,
   onLogoutDevice,
 }) => {
+  const [state, _setState] = useState({});
+  const setState = (data) => {
+    _setState((pre) => ({ ...pre, ...data }));
+  };
+
   useEffect(() => {
     if (deviceInfo?.ip) getCurrentUser();
   }, [deviceInfo]);
@@ -42,7 +27,7 @@ const LoginSecure = ({
     renderLine2: (_, item) =>
       item.current ? (
         <span>
-          {item.application}{" "}
+          {item.application}
           <span className="is-active"> . Đang hoạt động</span>
         </span>
       ) : (
@@ -55,7 +40,7 @@ const LoginSecure = ({
         <i
           className="fa-solid fa-right-from-bracket"
           onClick={() => {
-            onLogoutDevice(item.id);
+            setState({ visible: true, id: item.id });
           }}
         ></i>
       ),
@@ -63,6 +48,13 @@ const LoginSecure = ({
 
   return (
     <WrapperStyled>
+      <VerifyModal
+        visible={state.visible}
+        onSubmit={({ password }) => {
+          onLogoutDevice({ id: state.id, password });
+          setState({ visible: false });
+        }}
+      />
       <div className="wrapper-container-main">
         <List
           title="Nơi bạn đã đăng nhập"

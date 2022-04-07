@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import dataCache from "@utils/data-cache";
 
-export default ({
+const provider = ({
   // BẮT BUỘC
   fetchProvider, // phải là provider kết hợp từ base-provider
   storeName, // tên store
@@ -83,3 +83,5 @@ export default ({
     ...customEffect({ dispatch }),
   }),
 });
+
+export default provider;

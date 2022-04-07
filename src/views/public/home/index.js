@@ -1,17 +1,16 @@
 // import "@assets/css/font-awesome.css";
-import Post from "./components/post";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import Post from "./components/post";
 import { WrapperStyled } from "./styled";
-import AuthModal from "../container/login-modal";
 
 const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
-  const [state, _setState] = useState({
-    showModalPost: false,
-  });
-  const setState = (data) => {
-    _setState((pre) => ({ ...pre, ...data }));
-  };
+  // const [state, _setState] = useState({
+  //   showModalPost: false,
+  // });
+  const setState = (data) => {};
+  //   _setState((pre) => ({ ...pre, ...data }));
+  // };
 
   useEffect(() => {
     getlistBaiViet({ size: 20 });

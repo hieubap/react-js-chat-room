@@ -61,8 +61,8 @@ const Message = ({
         </div>
         {data?.type === 2 ? (
           <div className="list-image">
-            {listImage.map((item) => (
-              <div className="list-image-item">
+            {listImage.map((item, idx) => (
+              <div key={idx} className="list-image-item">
                 <img
                   onLoad={function (e) {
                     const { className, width, height } = e.target;

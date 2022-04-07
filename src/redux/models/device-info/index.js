@@ -12,6 +12,7 @@ const compare = (data1, data2) => {
   );
 };
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   ...baseStore({
     fetchProvider,
@@ -38,23 +39,21 @@ export default {
           });
       },
       logoutDevice: (data, { deviceInfo: { info, listCurrentUser } }) => {
-        if (compare(data, info)) {
-          toast.error(
-            "Tài khoản của bạn đã bị đăng xuất khỏi thiết bị. hệ thống sẽ tự động logout sau 5s"
-          );
-          setTimeout(() => {
-            dispatch.auth.onLogout();
-          }, 5000);
-        } else {
-          dispatch.deviceInfo.updateData({
-            listCurrentUser: listCurrentUser.filter(
-              (item) => item.id !== data?.id
-            ),
-          });
-        }
+        dispatch.deviceInfo.updateData({
+          listCurrentUser: listCurrentUser.filter(
+            (item) => item.id !== data?.id
+          ),
+        });
       },
-      onLogoutDevice: (payload, { socket: { stompClient } }) => {
-        stompClient?.send(`/app/logout.device.${payload}`, {});
+      onLogoutDevice: (
+        { id, password },
+        { auth: { auth }, socket: { stompClient } }
+      ) => {
+        const body = {
+          username: auth.username,
+          password,
+        };
+        stompClient?.send(`/app/logout.device.${id}`, {}, JSON.stringify(body));
       },
     }),
   }),

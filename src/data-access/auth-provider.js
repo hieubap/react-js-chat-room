@@ -2,6 +2,7 @@ import { API } from "@constants";
 import clientUtils from "@utils/client-utils";
 import { combineUrlParams } from "@src/utils/common";
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   login(body) {
     return new Promise((resolve, reject) => {

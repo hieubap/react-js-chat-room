@@ -7,10 +7,13 @@ import SockJS from "sockjs-client";
 import Stomp from "stomp-websocket";
 import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
+import { actionUser as actionDevice, actionPublic, actionUser } from "./action";
+import clientUtils from "@src/utils/client-utils";
 // import { message } from "antd";
 
 const refTimeout = createRef();
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   state: {
     stompClient: null,
@@ -31,13 +34,15 @@ export default {
     connect: (payload = {}, state) => {
       var stompClient = null;
       var socket = null;
-      const { userId } = state.auth?.auth || {};
+      const { userId, deviceInfoId } = state.auth?.auth || {};
 
       function connect() {
         socket = new SockJS("http://localhost:8800/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
-          { chatRoomId: 1, userId, roomId: 10, access: "ok" },
+          {
+            token: clientUtils.token,
+          },
           stompSuccess,
           stompFailure
         );
@@ -47,41 +52,13 @@ export default {
       const stompSuccess = (frame) => {
         console.log(frame, "frame");
         if (userId) {
-          stompClient.subscribe("/broker/chat/" + userId, ({ body }) => {
-            const res = JSON.parse(body);
-            if (res.type === "listRoom") {
-              dispatch.socket.updateData({ listRoom: res.data });
-              for (let i = 0; i < res.data?.length; i++) {
-                dispatch.socket.getListMessage(res.data[i]?.id);
-              }
-            } else if (res.type === "join") {
-              dispatch.socket.updateListRoom(res.data);
-            } else if (res.type === "warning") {
-              toast.error(res.data);
-            } else if (res.type === "chat") {
-              dispatch.socket.updateListMessage(res.data);
-              dispatch.socket.sendlastSeen({
-                messageId: res.data?.id,
-                roomId: res.data?.roomId,
-              });
-            } else if (res.type === "emoji") {
-              dispatch.socket.updateEmoji(res.data);
-            } else if (res.type === "emoji-remove") {
-              dispatch.socket.updateEmojiRemove(res.data);
-            } else if (res.type === "lastSeen") {
-              dispatch.socket.updateLastSeen(res.data);
-            } else if (res.type === "logout-device") {
-              dispatch.deviceInfo.logoutDevice(res.data);
-            }
-            console.log("received body: ", res);
-          });
+          stompClient.subscribe("/broker/public", actionPublic(dispatch));
+          stompClient.subscribe("/broker/user/" + userId, actionUser(dispatch));
+          stompClient.subscribe(
+            "/broker/device/" + deviceInfoId,
+            actionDevice(dispatch)
+          );
 
-          stompClient.subscribe("/broker/public", ({ body }) => {
-            const res = JSON.parse(body);
-            if (res.type === "coords") {
-            }
-            console.log("received body: ", res);
-          });
           stompClient.send("/app/list.room." + userId, {}, {});
         }
       };
@@ -125,7 +102,7 @@ export default {
     updateListMessage: (payload, state) => {
       const { listMessage, currentRoomId } = state.socket;
 
-      if (currentRoomId != payload.roomId) {
+      if (currentRoomId !== payload.roomId) {
         return;
       }
 
@@ -136,7 +113,7 @@ export default {
       const { listMessage, currentRoomId } = state.socket;
       const newMessages = Object.assign([], listMessage);
 
-      if (currentRoomId != payload.roomId) {
+      if (currentRoomId !== payload.roomId) {
         return;
       }
 
@@ -147,15 +124,15 @@ export default {
         item.listLastSeen?.some((i) => i.userId === payload.userId)
       );
 
-      if (indexRemove != -1) {
+      if (indexRemove !== -1) {
         const messageSeen = newMessages[indexRemove];
         messageSeen.listLastSeen = messageSeen?.listLastSeen.filter(
-          (i) => i.userId != payload.userId
+          (i) => i.userId !== payload.userId
         );
         newMessages.splice(indexRemove, 1, messageSeen);
       }
 
-      if (indexMessage != -1) {
+      if (indexMessage !== -1) {
         const messageSeen = newMessages[indexMessage];
         if (!messageSeen?.listLastSeen) {
           messageSeen.listLastSeen = [payload];
@@ -168,7 +145,7 @@ export default {
       const { listMessage, currentRoomId } = state.socket;
       const newMessages = Object.assign([], listMessage);
 
-      if (currentRoomId != payload.roomId) {
+      if (currentRoomId !== payload.roomId) {
         return;
       }
 
@@ -176,7 +153,7 @@ export default {
         (item) => item.id === payload.messageId
       );
 
-      if (indexMessage != -1) {
+      if (indexMessage !== -1) {
         const messageEmoji = newMessages[indexMessage];
         if (messageEmoji.listEmoji) {
           messageEmoji.listEmoji = [...messageEmoji.listEmoji, payload];
@@ -191,7 +168,7 @@ export default {
       const { listMessage, currentRoomId } = state.socket;
       const newMessages = Object.assign([], listMessage);
 
-      if (currentRoomId != payload.roomId) {
+      if (currentRoomId !== payload.roomId) {
         return;
       }
 
@@ -199,10 +176,10 @@ export default {
         (item) => item.id === payload.messageId
       );
 
-      if (indexMessage != -1) {
+      if (indexMessage !== -1) {
         const messageEmoji = newMessages[indexMessage];
         messageEmoji.listEmoji = messageEmoji.listEmoji?.filter(
-          (i) => i.userId != payload.userId
+          (i) => i.userId !== payload.userId
         );
       }
       dispatch.socket.updateData({ listMessage: [...newMessages] });

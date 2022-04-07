@@ -1,18 +1,15 @@
-import React, { useEffect } from "react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import PublicLayout from "@layouts/public";
+import "leaflet/dist/leaflet.css";
+import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import stores from "./redux";
 import "./style.scss";
-import "react-toastify/dist/ReactToastify.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "leaflet/dist/leaflet.css";
-
-import PublicLayout from "@layouts/public";
-
 import Oauth from "./views/oauth";
-import { toast, ToastContainer } from "react-toastify";
-import authProvider from "./data-access/auth-provider";
 
 const Root = () => {
   return (

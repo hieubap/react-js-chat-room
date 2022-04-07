@@ -3,6 +3,7 @@ import baseProvider from "./base-provider";
 import { combineUrlParams } from "@utils/common";
 import clientUtils from "@utils/client-utils";
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   ...baseProvider(API.room),
   addUser: (userId, roomId) => {

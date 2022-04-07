@@ -1,5 +1,6 @@
 import dataCache from "@utils/data-cache";
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   state: {
     historySearch: dataCache.read("history-search") || [],

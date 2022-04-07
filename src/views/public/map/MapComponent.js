@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import L from "leaflet";
@@ -7,6 +7,7 @@ const center = [15.8828276, 107.590866];
 
 const MapComponent = memo(({ map, refGeoJson }) => {
   const [state, _setState] = useState({ current: null });
+  const refUpdateCoords = useRef();
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
@@ -16,7 +17,7 @@ const MapComponent = memo(({ map, refGeoJson }) => {
     map.current = m;
   };
   useEffect(() => {
-    setInterval(() => {
+    refUpdateCoords.current = setInterval(() => {
       navigator.geolocation.getCurrentPosition((p) => {
         console.log(p, { lat: p.coords.latitude, lng: p.coords.longitude });
         setState({
@@ -24,6 +25,9 @@ const MapComponent = memo(({ map, refGeoJson }) => {
         });
       });
     }, 3000);
+    return () => {
+      clearInterval(refUpdateCoords.current);
+    };
   }, []);
 
   console.log(state, "state geo");

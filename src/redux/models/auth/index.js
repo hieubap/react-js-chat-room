@@ -1,7 +1,8 @@
 import authProvider from "@data-access/auth-provider";
-import { getAuditInfo } from "@src/utils/common";
 import clientUtils from "@utils/client-utils";
 import { toast } from "react-toastify";
+
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   state: {
     auth: (() => {
@@ -10,6 +11,7 @@ export default {
         if (data) {
           const parseData = JSON.parse(data);
           clientUtils.auth = "Bearer " + parseData.token;
+          clientUtils.token = parseData.token;
           return parseData;
         }
       } catch (error) {
@@ -76,7 +78,7 @@ export default {
     },
     changeAvatar: (file, { auth: { auth } }) => {
       authProvider.changeAvatar(file).then((res) => {
-        if (res && res.code == 0) {
+        if (res && res.code === 0) {
           dispatch.auth.updateData({
             auth: { ...auth, avatar: res.data?.avatar },
           });

@@ -3,6 +3,7 @@ import clientUtils from "@src/utils/client-utils";
 import { combineUrlParams } from "@src/utils/common";
 import baseProvider from "./base-provider";
 
+/* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   ...baseProvider(API.account),
   getUser: ({ page = 0, size = 10, ...param } = {}) => {

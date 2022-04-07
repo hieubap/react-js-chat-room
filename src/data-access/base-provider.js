@@ -1,7 +1,7 @@
 import { combineUrlParams } from "@utils/common";
 import clientUtils from "@utils/client-utils";
 
-export default (API = "") => ({
+const provider = (API = "") => ({
   search({ page = 0, size = 10, ...param }) {
     return new Promise((resolve, reject) => {
       clientUtils
@@ -72,3 +72,5 @@ export default (API = "") => ({
     });
   },
 });
+
+export default provider;

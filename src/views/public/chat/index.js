@@ -1,14 +1,11 @@
+import fileProvider from "@src/data-access/file-provider";
 import { dataURLtoFile, momentFromNow } from "@src/utils/common";
 import { getImg } from "@utils/common";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
 import Message from "./components/message";
-import AuthModal from "../container/login-modal";
 import { WrapperStyled } from "./styled";
-import CreateRoomModal from "../container/create-room-modal";
-import fileProvider from "@src/data-access/file-provider";
-import moment from "moment";
 
 let countFile = 1;
 
@@ -117,7 +114,7 @@ const ChatContainer = ({
           </div>
         </div>
         <div className="room-group">
-          {listRoom.map((item, idx) => (
+          {listRoom?.map((item, idx) => (
             <div key={idx} className="room-item" onClick={selectRoom(item)}>
               <div className="room-item-img">
                 <img src={getImg(item?.admin?.avatar)} />
