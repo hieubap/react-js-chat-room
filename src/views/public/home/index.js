@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import CardAuthor from "./components/CardAuthor";
+import ListFriend from "./components/ListFriend";
 import ModalCreatePost from "./components/ModalCreatePost";
 import Post from "./components/post";
 import { WrapperStyled } from "./styled";
@@ -22,13 +23,7 @@ const Home = ({ auth, getUser, getlistBaiViet, listBaiViet, updateData }) => {
   return (
     <WrapperStyled>
       <div className="container__adver-left">
-        <a href="" className="container__adver-link">
-          <img
-            src={require("@assets/images/qc2.png").default}
-            alt=""
-            className="container__adver-img"
-          />
-        </a>
+        <ListFriend></ListFriend>
       </div>
       <div className="container__body">
         <div className="container__body--main">

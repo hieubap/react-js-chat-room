@@ -10,6 +10,9 @@ const listAuthor = [
     email: "ngohieu1811@gmail.com",
     description: "Học lập trình web từ 10/2020",
     skill: "Java(spring boot), React, React Native",
+    facebook: "https://www.facebook.com/hieubap.2000/",
+    github: "https://github.com/hieubap/react-js-friend-chat/tree/develop",
+    gmail: "",
   },
   {
     avatar: require("@assets/images/HOANG.png").default,
@@ -24,6 +27,7 @@ const listAuthor = [
 const CardAuthor = (props) => {
   return (
     <WrapperStyled>
+      <div className="header-team">Đội ngũ phát triển</div>
       {listAuthor.map((item, key) => (
         <Author key={key} {...item}></Author>
       ))}

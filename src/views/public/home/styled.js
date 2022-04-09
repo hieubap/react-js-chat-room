@@ -16,12 +16,12 @@ export const WrapperStyled = styled.div`
         }
       }
       &-left {
-        left: 50px;
+        left: 0;
       }
       &-right {
         position: absolute;
-        top: 20px;
-        right: 50px;
+        top: 80px;
+        right: 40px;
       }
     }
     &__body {

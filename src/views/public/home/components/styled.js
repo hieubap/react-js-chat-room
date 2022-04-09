@@ -12,7 +12,7 @@ export const WrapperStyled = styled.div`
       display: flex;
       justify-content: space-between;
       &-info {
-        padding: 8px 15px;
+        padding: 0 15px;
         ul {
           list-style: none;
           display: inline-block;
