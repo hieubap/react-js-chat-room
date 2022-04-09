@@ -19,7 +19,6 @@ const LoginSecure = ({
   useEffect(() => {
     if (deviceInfo?.ip) getCurrentUser();
   }, [deviceInfo]);
-  console.log(listCurrentUser, "listCurrentUser");
 
   const render = {
     renderLine1: (_, item) =>

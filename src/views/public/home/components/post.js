@@ -1,4 +1,4 @@
-import { getImg } from "@src/utils/common";
+import { getImg, timeFromNow } from "@src/utils/common";
 import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -17,10 +17,9 @@ const Post = ({
   numberComment,
   imgPath,
   createdBy,
+  likeId,
   isLike,
   avatar,
-  resManagerDTO,
-  idRes,
 
   auth,
   onEdit,
@@ -67,16 +66,16 @@ const Post = ({
 
       return;
     }
-    // onLike({ isLike: !isLike, postId: id });
+    onLike({ isLike: !isLike, postId: id });
     if (refTimeout.current) {
       clearTimeout(refTimeout.current);
     }
 
     refTimeout.current = setTimeout(() => {
       if (isLike) {
-        deleteLike(id);
+        deleteLike({ postId: id, id: likeId });
       } else {
-        createLike(id);
+        createLike({ postId: id });
       }
     }, 1000);
   };
@@ -93,21 +92,21 @@ const Post = ({
       numberComment: numberComment + input,
       imgPath,
       createdBy,
-      isLike,
+      likeId,
     });
   };
   const showComment = (forceCall) => {
-    // if (state.isClickComment && !forceCall) return;
-    // getListComment({
-    //   page: 0,
-    //   size: 99,
-    //   // userId: auth?.userId,
-    //   postId: id,
-    // }).then((res) => {
-    //   if (res && res.code === 0) {
-    //     setState({ isClickComment: true, listComment: res.data });
-    //   }
-    // });
+    if (state.isClickComment && !forceCall) return;
+    getListComment({
+      page: 0,
+      size: 99,
+      // userId: auth?.userId,
+      postId: id,
+    }).then((res) => {
+      if (res && res.code === 0) {
+        setState({ isClickComment: true, listComment: res.data });
+      }
+    });
   };
 
   const handleComment = () => {
@@ -132,7 +131,7 @@ const Post = ({
   };
 
   const handleDeleteComment = (commentId) => {
-    deleteComment(commentId).then((res) => {
+    deleteComment({ id: commentId }).then((res) => {
       if (res && res.code === 0) {
         const newListComment = Object.assign([], state.listComment);
         setState({
@@ -148,58 +147,50 @@ const Post = ({
       <div className="container-header">
         <div className="container-header-info">
           <img
-            src={getImg(resManagerDTO?.avatar)}
+            src={getImg(avatar)}
             alt=""
             className="container-header-info_avatar"
           />
           <ul className="container__body--main-frame-headerNT">
-            <li className="container-header-info_name">{"Ngô Hiếu"}</li>
-            <li className="container-header-info_time">{"45 phút trước"}</li>
+            <li className="container-header-info_name">{author}</li>
+            <li className="container-header-info_time">
+              {timeFromNow(createdAt)}
+            </li>
           </ul>
         </div>
         <div className="sidebar">
-          {auth?.userId && auth?.userId === idRes && (
+          {auth?.userId && auth?.userId === createdBy && (
             <label
               onClick={() => {
                 setState({ showMenu: true });
               }}
             >
-              <i className="container__body--main-frame-header-menu fa fa-ellipsis-h"></i>
+              <i className="sidebar_menu-icon fa fa-ellipsis-h"></i>
             </label>
           )}
           {state.showMenu && (
             <div className="sidebar_menu post-menu-id">
-              {auth?.userId === idRes && (
-                <ul className="sidebar_menu-list post-menu-id">
-                  {auth?.userId === createdBy && (
-                    <li
-                      onClick={onEdit}
-                      className="sidebar_menu-item post-menu-id"
-                    >
-                      Sửa bài
-                    </li>
-                  )}
-                  <li
-                    className="sidebar_menu-item post-menu-id"
-                    onClick={() => {
-                      setState({ showPopConfirm: true });
-                    }}
-                  >
-                    Xóa bài
-                  </li>
-                </ul>
-              )}
+              <ul className="sidebar_menu-list post-menu-id">
+                <li onClick={onEdit} className="sidebar_menu-item post-menu-id">
+                  Sửa bài
+                </li>
+                <li
+                  className="sidebar_menu-item post-menu-id"
+                  onClick={() => {
+                    setState({ showPopConfirm: true });
+                  }}
+                >
+                  Xóa bài
+                </li>
+              </ul>
             </div>
           )}
         </div>
       </div>
-      <p className="container-body">{"Nội dung bài viết"}</p>
-      <img
-        // src={`${clientUtils.serverApi}/files/${imgPath}`}
-        src="https://www.state.gov/wp-content/uploads/2019/04/Japan-2107x1406.jpg"
-        alt=""
-        className="container-body_img"
-      />
+      <p className="container-body">{content}</p>
+      {imgPath && (
+        <img src={getImg(imgPath)} alt="" className="container-body_img" />
+      )}
 
       <div className="container-footer">
         <div className="container-footer-like">
@@ -214,39 +205,41 @@ const Post = ({
       <div className="container-comment">
         <div
           onClick={handleLike}
-          className={`container-comment-action-like ${
-            isLike ? "container-comment-action-liked" : ""
+          className={`container-comment-like ${
+            isLike ? "container-comment-liked" : ""
           }`}
         >
-          <i className="container-comment-action-like-icon fa fa-heart"></i>
-          <span className="container-comment-action-like-btn">Yêu thích</span>
+          <i className="container-comment-like-icon fa fa-heart"></i>
+          <span className="container-comment-like-btn">Yêu thích</span>
         </div>
-        <div className="container-comment-action-cmt" onClick={showComment}>
-          <i className="container-comment-action-cmt-icon fa fa-comments"></i>
-          <span className="container-comment-action-cmt-btn">Bình luận</span>
-        </div>
-      </div>
-      <div className="container-input-cmt">
-        <div className="left-comment">
-          <div className="avatar">
-            <img
-              src={getImg(auth?.avatar)}
-              alt=""
-              className="frame-header-avt"
-            />
-          </div>
-          <div className="comment-input">
-            <InputComment ref={refComment} />
-          </div>
-        </div>
-        <div>
-          <button type="primary" onClick={handleComment}>
-            Đăng
-          </button>
+        <div className="container-comment-cmt" onClick={showComment}>
+          <i className="container-comment-cmt-icon fa fa-comments"></i>
+          <span className="container-comment-cmt-btn">Bình luận</span>
         </div>
       </div>
+      {state.isClickComment && auth?.userId && (
+        <div className="container-input-cmt">
+          <div className="left-comment">
+            <div className="avatar">
+              <img
+                src={getImg(auth?.avatar)}
+                alt=""
+                className="frame-header-avt"
+              />
+            </div>
+            <div className="comment-input">
+              <InputComment ref={refComment} />
+            </div>
+          </div>
+          <div>
+            <button type="primary" onClick={handleComment}>
+              Đăng
+            </button>
+          </div>
+        </div>
+      )}
 
-      {[1, 2, 3].map((item, idx) => (
+      {state.listComment?.map((item, idx) => (
         <div key={idx} className="container__list-comment">
           <div className="container__list-comment-avatar">
             <img
@@ -257,13 +250,18 @@ const Post = ({
           </div>
           <div className="comment-item">
             <span>
-              <span className="comment-username">{"Ngô Huy"}</span>
+              <span className="comment-username">{item.fullName}</span>
             </span>
             <div>
-              <div className="content-comment">{"Nội dung comment"}</div>
+              <div className="content-comment">{item.content}</div>
             </div>
           </div>
-          <i className="fa fa-times delete-comment" />
+          {item.createdBy === auth?.userId && (
+            <i
+              className="fa fa-times delete-comment"
+              onClick={() => handleDeleteComment(item.id)}
+            />
+          )}
         </div>
       ))}
       {/* <Modal
@@ -293,23 +291,23 @@ export default connect(
     auth: { logout },
     cache: { saveHistory },
     post: { search: getListPost, delete: deletePost, updatePost },
-    // like: { createLike, deleteLike, onLike },
-    // comment: {
-    //   _createOrEdit: createComment,
-    //   _getList: getListComment,
-    //   _onDelete: deleteComment,
-    // },
+    postEmoji: { save: createLike, delete: deleteLike, onLike },
+    postComment: {
+      save: createComment,
+      search: getListComment,
+      delete: deleteComment,
+    },
   }) => ({
     logout,
     saveHistory,
     getListPost,
     updatePost,
-    // createLike,
-    // deleteLike,
-    // onLike,
-    // createComment,
-    // deleteComment,
-    // getListComment,
+    createLike,
+    deleteLike,
+    onLike,
+    createComment,
+    deleteComment,
+    getListComment,
     deletePost,
   })
 )(Post);

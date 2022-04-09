@@ -107,7 +107,6 @@ const WrapperLogin = styled.div`
 `;
 
 const VerifyModal = ({ onLogin, onRegister, auth, visible, onSubmit }) => {
-  console.log(auth, "auth");
   const [state, _setState] = useState({
     isLogin: true,
   });

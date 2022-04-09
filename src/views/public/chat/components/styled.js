@@ -21,19 +21,21 @@ export const StyledModal = styled.div`
     left: 0;
     top: 0;
     &-layer {
-      position: absolute;
+      position: relative;
       width: ${(props) => props.width + "px"};
-      height: ${(props) => props.height + 50 + "px"};
-      top: 100px;
-      left: ${(props) => `calc(50% - ${props.width / 2}px)`};
+      min-height: 450px;
+      height: auto;
+      top: 50px;
+      margin: auto;
+      padding: 50px 0;
     }
     &-main {
       border-radius: 10px;
       overflow: hidden;
       width: 100%;
-      height: calc(100% - 50px);
-      position: absolute;
+      height: auto;
       background-color: white;
+      position: relative;
     }
   }
 `;

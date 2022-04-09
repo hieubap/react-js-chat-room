@@ -10,6 +10,9 @@ const provider = ({
   initStore = {},
   ignoreCache,
   customEffect = () => ({}),
+  afterSave,
+  afterDelete,
+  isList = false,
 }) => ({
   state: {
     listData: [],
@@ -46,16 +49,17 @@ const provider = ({
       });
     },
     // payload có id là put còn không thì là post
-    save: (payload) => {
+    save: (payload, state) => {
       const callApi = payload.id ? fetchProvider.put : fetchProvider.post;
       return new Promise((resolve, reject) => {
         callApi(payload, payload.id)
           .then((res) => {
             if (res && res.code === 0 && res.data) {
-              dispatch[storeName].search();
+              if (isList) dispatch[storeName].search();
+              if (afterSave) afterSave(res.data, dispatch, state);
             } else if (res && res.code === 401) {
               window.location.href = "/login";
-            } else {
+            } else if (res.code !== 1000) {
               toast.error(res.message);
             }
             resolve(res);
@@ -66,10 +70,11 @@ const provider = ({
     delete: (payload, state) => {
       return new Promise((resolve, reject) => {
         fetchProvider
-          .delete(payload)
+          .delete(payload.id)
           .then((res) => {
             if (res && res.code === 0) {
-              dispatch[storeName].search();
+              if (isList) dispatch[storeName].search();
+              if (afterDelete) afterDelete(payload, dispatch, state);
             } else if (res && res.code === 401) {
               window.location.href = "/login";
             } else {

@@ -12,8 +12,7 @@ const provider = (API = "") => ({
             size,
             ...param,
           }),
-          {},
-          true
+          {}
         )
         .then((x) => {
           resolve(x);

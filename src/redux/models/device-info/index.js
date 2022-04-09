@@ -1,4 +1,6 @@
 import fetchProvider from "@data-access/device-info-provider";
+import authProvider from "@src/data-access/auth-provider";
+import deviceInfoProvider from "@src/data-access/device-info-provider";
 import { getAuditInfo } from "@src/utils/common";
 import { toast } from "react-toastify";
 import baseStore from "../base-store";
@@ -54,6 +56,20 @@ export default {
           password,
         };
         stompClient?.send(`/app/logout.device.${id}`, {}, JSON.stringify(body));
+      },
+      checkLogout: (payload, { auth: { auth } }) => {
+        console.log(auth, "auth");
+        if (!auth?.deviceInfoId) return;
+        deviceInfoProvider.checkLogout(auth?.deviceInfoId).then((res) => {
+          if (res && res.data) {
+            toast.error("Thiết bị đã bị đăng xuất");
+            authProvider.logout(5000);
+          } else {
+            if (auth?.userId) {
+              dispatch.socket.connect();
+            }
+          }
+        });
       },
     }),
   }),

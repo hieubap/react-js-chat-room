@@ -10,11 +10,11 @@ export default {
     initState: { size: 20 },
     customEffect: ({ dispatch }) => ({
       updatePost: (payload, state) => {
-        const listData = Object.assign([], state.post._listData);
+        const listData = Object.assign([], state.post.listData);
         const index = listData.findIndex((item) => item.id === payload.id);
         listData[index] = payload;
 
-        dispatch.post.updateData({ _listData: listData });
+        dispatch.post.updateData({ listData: listData });
       },
     }),
   }),

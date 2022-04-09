@@ -72,10 +72,6 @@ export default {
           .catch(reject);
       });
     },
-    onLogout: (payload, state) => {
-      localStorage.clear();
-      window.location.href = "/p/home";
-    },
     changeAvatar: (file, { auth: { auth } }) => {
       authProvider.changeAvatar(file).then((res) => {
         if (res && res.code === 0) {

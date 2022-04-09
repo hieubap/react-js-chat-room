@@ -106,8 +106,7 @@ const WrapperLogin = styled.div`
   }
 `;
 
-const AuthModal = ({ onLogin, onRegister, auth }) => {
-  console.log(auth, "auth");
+const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
   const [state, _setState] = useState({
     isLogin: true,
     visible: !auth?.userId,
@@ -139,6 +138,7 @@ const AuthModal = ({ onLogin, onRegister, auth }) => {
     callApi(body).then(() => {
       if (state.isLogin) {
         setState({ visible: false });
+        connect();
       } else {
         setState({ isLogin: true });
       }
@@ -259,5 +259,9 @@ const AuthModal = ({ onLogin, onRegister, auth }) => {
 
 export default connect(
   ({ auth: { auth } }) => ({ auth }),
-  ({ auth: { onLogin, onRegister } }) => ({ onLogin, onRegister })
+  ({ auth: { onLogin, onRegister }, socket: { connect } }) => ({
+    onLogin,
+    onRegister,
+    connect,
+  })
 )(AuthModal);

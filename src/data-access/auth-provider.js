@@ -58,4 +58,14 @@ export default {
         });
     });
   },
+  logout(pending) {
+    localStorage.clear();
+    if (pending) {
+      setTimeout(() => {
+        window.location.href = "/p/home";
+      }, pending);
+    } else {
+      window.location.href = "/p/home";
+    }
+  },
 };

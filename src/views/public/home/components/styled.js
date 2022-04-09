@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const WrapperStyled = styled.div`
-  margin-top: 50px;
+  margin-top: 30px;
   border: 1px solid #ccc;
   border-radius: 6px;
   width: 100%;
@@ -37,6 +37,40 @@ export const WrapperStyled = styled.div`
           color: #65676b;
         }
       }
+      .sidebar {
+        position: relative;
+        .sidebar_menu {
+          position: absolute;
+          right: 10px;
+          width: 75px;
+          background-color: #fff;
+          border-radius: 4px;
+          box-shadow: 0 0 5px rgb(182, 179, 179);
+          &-icon {
+            margin: 15px;
+            font-size: 1.4rem;
+            cursor: pointer;
+          }
+          &-list {
+            list-style: none;
+            padding: 5px 0;
+            margin: 0;
+          }
+          &-item {
+            display: block;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 450;
+            color: #333;
+            text-align: center;
+            padding: 5px;
+            cursor: pointer;
+            :hover {
+              background-color: #ccc;
+            }
+          }
+        }
+      }
     }
     &-body {
       font-size: 16px;
@@ -52,16 +86,18 @@ export const WrapperStyled = styled.div`
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 15px;
+      padding: 5px 15px;
       border-bottom: 1px solid rgb(235, 229, 229);
-      &-like {
+      &-like,
+      &-cmt {
         &-icon {
-          font-size: 1.6rem;
+          font-size: 16px;
           color: rgb(238, 66, 66);
         }
         &-q {
-          font-size: 1.45rem;
-          margin-left: 5px;
+          color: #555;
+          font-size: 16px;
+          margin: 0 5px;
         }
       }
     }
@@ -76,12 +112,12 @@ export const WrapperStyled = styled.div`
         cursor: pointer;
 
         &-icon {
-          font-size: 1.6rem;
-          margin-right: 3px;
+          font-size: 16px;
+          margin-right: 5px;
         }
 
         &-btn {
-          font-size: 1.45rem;
+          font-size: 16px;
         }
       }
       &-liked {
@@ -111,16 +147,22 @@ export const WrapperStyled = styled.div`
           }
         }
       }
-      textarea {
-        border: none;
-        padding-top: 6px;
-        width: 100%;
-        margin-left: 15px;
+      .textarea-comment {
+        padding: 3px 7px;
         background-color: #f0f2f5;
-        min-height: 36px;
         border-radius: 18px;
-        padding-left: 10px;
-        outline: none;
+        textarea {
+          padding: 0;
+          background-color: #f0f2f5;
+          border: none;
+          width: 100%;
+          outline: none;
+          resize: none;
+          overflow: hidden;
+          min-height: 36px;
+          max-height: 100px;
+          font-size: 14px;
+        }
       }
     }
 
@@ -139,24 +181,31 @@ export const WrapperStyled = styled.div`
       }
       .comment-item {
         background-color: #f0f2f5;
-        border-radius: 5px;
+        border-radius: 10px;
         text-align: left;
-        padding: 5px 15px;
+        padding: 0px 15px 5px;
         max-width: calc(100% - 90px);
         .comment-username {
           font-size: 13px;
-          font-weight: bold;
+          font-weight: 600;
           color: black;
         }
         .content-comment {
           white-space: pre;
+          font-size: 14px;
         }
       }
-    }
-    .delete-comment {
-      margin-left: 15px;
-      padding-top: 16px;
-      cursor: pointer;
+      .delete-comment {
+        margin-left: 15px;
+        padding-top: 16px;
+        cursor: pointer;
+        display: none;
+      }
+      :hover {
+        .delete-comment {
+          display: block;
+        }
+      }
     }
   }
 `;

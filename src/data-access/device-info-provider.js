@@ -1,4 +1,5 @@
 import { API } from "@src/constants";
+import clientUtils from "@src/utils/client-utils";
 import baseProvider from "./base-provider";
 
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
@@ -9,6 +10,23 @@ export default {
       fetch(`https://geolocation-db.com/json/`, { method: "get" })
         .then((x) => {
           resolve(x.json());
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  },
+  checkLogout: (deviceInfoId) => {
+    return new Promise((resolve, reject) => {
+      clientUtils
+        .requestApi(
+          "get",
+          `${API.deviceInfo}/check-logout/${deviceInfoId}`,
+          {},
+          true
+        )
+        .then((x) => {
+          resolve(x);
         })
         .catch((e) => {
           reject(e);

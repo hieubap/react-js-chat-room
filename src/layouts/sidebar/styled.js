@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const WrapperStyled = styled.div`
   width: 250px;
   height: 100%;
-  background: #02231c;
+  background: var(--gray-dark);
   color: white;
   padding: 10px 0;
   .sidebar-item {
@@ -20,7 +20,8 @@ export const WrapperStyled = styled.div`
     span {
       padding-left: 10px;
     }
-    :hover {
+    :hover,
+    &.active {
       background-color: #3670ce;
     }
   }

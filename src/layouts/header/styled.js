@@ -22,6 +22,16 @@ export const WrapperHeader = styled.div`
         &-item {
           padding: 15px;
           cursor: pointer;
+          i {
+            font-size: 20px;
+            margin: 0 10px;
+          }
+          &.active {
+            background-color: white;
+            i {
+              color: var(--green);
+            }
+          }
         }
         &-item::before {
           background-color: red;

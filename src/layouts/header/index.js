@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { useHistory } from "react-router";
 import { WrapperHeader } from "./styled";
 
-const Header = (props) => {
+const Header = ({ auth }) => {
+  const [activeKey, setActiveKey] = useState();
   const history = useHistory();
   const routes = [
-    { title: "Home", path: "/p/home" },
-    { title: "Chat", path: "/p/chat" },
-    { title: "Map", path: "/p/map" },
-    { title: "Setting", path: "/p/setting" },
+    { title: "Home", path: "/p/home", icon: "fa-solid fa-house" },
+    { title: "Chat", path: "/p/chat", icon: "fa-solid fa-comment-dots" },
+    { title: "Setting", path: "/p/setting", icon: "fa-solid fa-gear" },
   ];
+
+  useEffect(() => {
+    setActiveKey(routes.findIndex((i) => i.path === window.location.pathname));
+  }, []);
 
   return (
     <WrapperHeader>
@@ -19,25 +24,21 @@ const Header = (props) => {
             {routes.map((item, key) => (
               <div
                 key={key}
-                className="navbar-item"
+                className={"navbar-item" + (activeKey === key ? " active" : "")}
                 onClick={() => {
                   history.push(item.path);
+                  setActiveKey(key);
                 }}
               >
-                {item.title}
+                <i className={item.icon} />
+                {/* {item.title} */}
               </div>
             ))}
           </div>
         </div>
         <div className="main-header-right">
           <div className="wrapper-item">
-            <div className="wrapper-item-content">chat</div>
-          </div>
-          <div className="wrapper-item">
-            <div className="wrapper-item-content">chat</div>
-          </div>
-          <div className="wrapper-item">
-            <div className="wrapper-item-content">Account</div>
+            <div className="wrapper-item-content">{auth?.full_name}</div>
           </div>
         </div>
       </div>
@@ -45,4 +46,4 @@ const Header = (props) => {
   );
 };
 
-export default Header;
+export default connect(({ auth: { auth } }) => ({ auth }))(Header);

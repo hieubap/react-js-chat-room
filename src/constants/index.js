@@ -8,4 +8,6 @@ export const API = {
   message: "/message",
   post: "/post",
   deviceInfo: "/device-info",
+  postEmoji: "/post-emoji",
+  postComment: "/post-comment",
 };

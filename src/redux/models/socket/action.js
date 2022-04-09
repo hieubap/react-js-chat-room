@@ -1,3 +1,4 @@
+import authProvider from "@src/data-access/auth-provider";
 import { toast } from "react-toastify";
 
 const typeAction = {
@@ -39,7 +40,7 @@ export const actionUser =
     } else if (res.type === typeAction.LAST_SEEN) {
       dispatch.socket.updateLastSeen(res.payload);
     }
-    console.log("received body: ", res);
+    console.log("received body user: ", res);
   };
 
 export const actionPublic =
@@ -53,19 +54,18 @@ export const actionPublic =
 
 export const actionDevice =
   (dispatch) =>
-  ({ body }) => {
+  ({ body = "{}" }) => {
     const res = JSON.parse(body);
     if (res.type === typeAction.LOGOUT_DEVICE) {
       toast.error(
         "Tài khoản của bạn đã bị đăng xuất khỏi thiết bị. hệ thống sẽ tự động logout sau 5s"
       );
-      setTimeout(() => {
-        dispatch.auth.onLogout();
-      }, 5000);
+      authProvider.logout(5000);
     } else if (res.type === typeAction.WARNING) {
       toast.error(res.payload);
     } else if (res.type === typeAction.SUCCESS_LOGOUT) {
       toast.success("Đăng xuất thiết bị thành công");
+      dispatch.deviceInfo.logoutDevice(res.payload);
     }
-    console.log("received body: ", res);
+    console.log("received body device: ", res);
   };

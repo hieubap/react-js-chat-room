@@ -1,3 +1,4 @@
+import deviceInfoProvider from "@src/data-access/device-info-provider";
 import { routes_public } from "@views/routes";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
@@ -6,18 +7,19 @@ import AuthModal from "../../views/public/container/login-modal";
 import Header from "../header";
 import { WrapperLayoutPublic } from "./styled";
 
-const Public = ({ auth, getDeviceInfo, connectSocket }) => {
+const Public = ({ auth, getDeviceInfo, connectSocket, checkLogout }) => {
   useEffect(() => {
     getDeviceInfo();
+    // checkLogout();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    if (auth?.userId) {
-      console.log(auth, "auth");
-      connectSocket();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  // useEffect(() => {
+  //   if (auth?.userId) {
+  //     console.log(auth, "auth");
+  //     connectSocket();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [auth]);
 
   return (
     <WrapperLayoutPublic>
@@ -36,8 +38,12 @@ const Public = ({ auth, getDeviceInfo, connectSocket }) => {
 
 export default connect(
   ({ auth: { auth } }) => ({ auth }),
-  ({ deviceInfo: { getDeviceInfo }, socket: { connect: connectSocket } }) => ({
+  ({
+    deviceInfo: { getDeviceInfo, checkLogout },
+    socket: { connect: connectSocket },
+  }) => ({
     getDeviceInfo,
     connectSocket,
+    checkLogout,
   })
 )(Public);

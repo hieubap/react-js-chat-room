@@ -7,7 +7,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stomp-websocket";
 import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
-import { actionUser as actionDevice, actionPublic, actionUser } from "./action";
+import { actionDevice, actionPublic, actionUser } from "./action";
 import clientUtils from "@src/utils/client-utils";
 // import { message } from "antd";
 

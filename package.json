@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "leaflet": "^1.7.1",
-    "react-leaflet": "^3.2.0",
-    "react-leaflet-markercluster": "^3.0.0-rc1",
-    "leaflet-fullscreen": "^1.0.2",
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/timegrid": "^5.10.1",
