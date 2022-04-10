@@ -7,7 +7,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stomp-websocket";
 import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
-import client from '@utils/client-utils'
+import client from "@utils/client-utils";
 // import { message } from "antd";
 
 const refTimeout = createRef();
@@ -35,10 +35,13 @@ export default {
       const { userId } = state.auth?.auth || {};
 
       function connect() {
-        socket = new SockJS("http://localhost:8085/chat-server/ws"); // api/v1
+        socket = new SockJS("http://localhost:8000/chat-server/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
-          { Authorization : client.auth},
+          {
+            Authorization:
+              "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiY2hhdC1zZXJ2ZXIiLCJhdXRoLXNlcnZlciIsIm9yZGVyLXNlcnZlciIsImhvYW5nIl0sInJvbGUiOiJVU0VSIiwidXNlcl9uYW1lIjoiaG9hbmdwdiIsInNjb3BlIjpbInJlYWQiLCJzZXJ2ZXIiLCJ3cml0ZSJdLCJmdWxsTmFtZSI6IlBo4bqhbSBWaeG7h3QgSG_DoG5nIiwiZXhwIjoxNjQ5NjEwMDAwLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwianRpIjoiZTZjMjU5ZjMtMWNlNy00MDkwLWE4YWUtMDlhNjE3YzhiOWY5IiwiZW1haWwiOm51bGwsImNsaWVudF9pZCI6ImhvYW5nIiwidXNlcm5hbWUiOiJob2FuZ3B2In0.bOuw2N3UlmBbakegCvUBQKBx2xYpVS6OgcqBCZHg1WXbZT77zSG3vzW94jjo93476a3N80oZgFk9EEb_8_N-dV9BpjPUiqlf6RtrK3U7mTAyreoHIF0B5Tn9RT3qffOAtXbx6-rYGXOHt4ufyYs57NHX_61C3R_S7PV2dr5eo8gRBTvaFHUGmBfsvhUgNF-By3ESO3MIOrW6PVzjXmXnxGWaEWV5FtJznrlGUDQPZp6o_OhZu8oeJg7tKMwcnOQmtCmC8yPgWC27d6DQAO2EOhGolFiKFMI9-K2aitErJWyL3N8P_u0Kh6_IActQc2Jry7VC8m_0cggBYP1htMxHXw",
+          },
           stompSuccess,
           stompFailure
         );
@@ -46,6 +49,7 @@ export default {
       }
 
       const stompSuccess = (frame) => {
+        console.log("oke");
         console.log(frame, "frame");
         if (userId) {
           stompClient.subscribe("/broker/chat/" + userId, ({ body }) => {
@@ -73,6 +77,7 @@ export default {
       };
 
       function stompFailure(error) {
+        console.log("err");
         toast.error("Hệ thống đang bảo trì. Xin vui lòng chờ ...");
       }
 
