@@ -13,13 +13,13 @@ const Public = ({ auth, getDeviceInfo, connectSocket, checkLogout }) => {
     // checkLogout();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // useEffect(() => {
-  //   if (auth?.userId) {
-  //     console.log(auth, "auth");
-  //     connectSocket();
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [auth]);
+  useEffect(() => {
+    if (auth?.userId) {
+      console.log(auth, "auth");
+      connectSocket();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   return (
     <WrapperLayoutPublic>
