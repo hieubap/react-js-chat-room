@@ -26,7 +26,7 @@ export const WrapperStyled = styled.div`
       height: 100%;
       overflow-y: scroll;
       width: 280px;
-      background: white;
+      /* background: white; */
       .collapse-tool {
         &-title {
           font-size: 14px;

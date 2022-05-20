@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const UrlServer = () => {
   const domain = global.origin;
   const localhost = true;

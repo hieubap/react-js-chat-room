@@ -19,7 +19,7 @@ export const actionUser =
   ({ body }) => {
     const res = JSON.parse(body);
     if (res.type === typeAction.LIST_ROOM) {
-      dispatch.socket.updateData({ listRoom: res.payload });
+      dispatch.socket.updateListRoom({ newRoom: res.payload });
       for (let i = 0; i < res.payload?.length; i++) {
         dispatch.socket.getListMessage(res.payload[i]?.id);
       }

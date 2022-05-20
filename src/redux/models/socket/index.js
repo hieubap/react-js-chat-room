@@ -9,6 +9,7 @@ import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
 import { actionDevice, actionPublic, actionUser } from "./action";
 import clientUtils from "@src/utils/client-utils";
+import { getImg } from "@src/utils/common";
 // import { message } from "antd";
 
 const refTimeout = createRef();
@@ -90,14 +91,40 @@ export default {
         }
       });
     },
-    updateListRoom: (payload, state) => {
+    updateListRoom: ({ newRoom, isNew }, { auth: { auth }, ...state }) => {
       const { listRoom } = state.socket;
-      const indexRoom = listRoom.findIndex((item) => item.id === payload.id);
-      if (indexRoom !== -1) {
-        listRoom.splice(indexRoom, 1);
-      }
+      let newList = [...listRoom];
 
-      dispatch.socket.updateData({ listRoom: [payload, ...listRoom] });
+      if (isNew) {
+        const indexRoom = newList.findIndex((item) => item.id === newRoom.id);
+        if (indexRoom !== -1) {
+          newList.splice(indexRoom, 1);
+        }
+        newList = [newRoom, ...listRoom];
+      } else {
+        newList = newRoom;
+      }
+      dispatch.socket.updateData({
+        listRoom: newList.map((item) => ({
+          ...item,
+          name:
+            item.connectedUsers?.length === 1
+              ? item.adminId === auth?.userId
+                ? item.connectedUsers[0]?.fullName
+                : item.admin?.fullName
+              : item.connectedUsers?.length === 0
+              ? "Chỉ có bạn"
+              : "Nhóm " + item.id,
+          avatar:
+            item.connectedUsers?.length === 1
+              ? item.adminId === auth?.userId
+                ? item.connectedUsers[0]?.avatar
+                : item.admin?.avatar
+              : item.connectedUsers?.length === 0
+              ? auth.avatar
+              : "",
+        })),
+      });
     },
     updateListMessage: (payload, state) => {
       const { listMessage, currentRoomId } = state.socket;

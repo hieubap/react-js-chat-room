@@ -101,14 +101,14 @@ const ChatContainer = ({
               type="file"
               onChange={(e) => {
                 const [file] = e.target.files;
-                debugger;
-                // changeAvatar(file);
+                changeAvatar(file);
               }}
             />
             <i
               className="fa-solid fa-pen-to-square"
               onClick={() => {
-                setState({ createRoom: true });
+                handleCreate();
+                // setState({ createRoom: true });
               }}
             ></i>
           </div>
@@ -117,10 +117,10 @@ const ChatContainer = ({
           {listRoom?.map((item, idx) => (
             <div key={idx} className="room-item" onClick={selectRoom(item)}>
               <div className="room-item-img">
-                <img src={getImg(item?.admin?.avatar)} />
+                <img src={getImg(item?.avatar)} />
               </div>
               <div className="room-item-content">
-                <div className="room-item-content-user">Room {item.id}</div>
+                <div className="room-item-content-user">{item.name}</div>
                 <div className="room-item-content-message">
                   {item?.lastMessage?.fullName && (
                     <span>
@@ -303,7 +303,7 @@ const ChatContainer = ({
               </div>
             </div>
           )}
-          {/* <div className="collapse-tool-title">Thêm thành viên nhóm</div>
+          <div className="collapse-tool-title">Thêm thành viên nhóm</div>
           {currentRoomId && (
             <div className="list-user">
               {listAllUser.map((item, key) => (
@@ -326,7 +326,7 @@ const ChatContainer = ({
                 </div>
               ))}
             </div>
-          )} */}
+          )}
         </div>
       </div>
     </WrapperStyled>

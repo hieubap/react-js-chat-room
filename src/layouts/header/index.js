@@ -9,6 +9,7 @@ const Header = ({ auth }) => {
   const routes = [
     { title: "Home", path: "/p/home", icon: "fa-solid fa-house" },
     { title: "Chat", path: "/p/chat", icon: "fa-solid fa-comment-dots" },
+    { title: "App", path: "/p/app", icon: "fa-solid fa-comment-dots" },
     { title: "Setting", path: "/p/setting", icon: "fa-solid fa-gear" },
   ];
 
@@ -30,8 +31,8 @@ const Header = ({ auth }) => {
                   setActiveKey(key);
                 }}
               >
-                <i className={item.icon} />
-                {/* {item.title} */}
+                {/* <i className={item.icon} /> */}
+                {item.title}
               </div>
             ))}
           </div>

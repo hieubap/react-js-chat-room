@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Modal from "../chat/components/modal";
 
 const WrapperLogin = styled.div`
+  padding-bottom: 50px;
   .md-login-header {
     text-align: center;
     font-size: 20px;
@@ -135,14 +136,17 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
     }
     const callApi = state.isLogin ? onLogin : onRegister;
     const body = { username, password, ...(state.isLogin ? {} : { fullName }) };
-    callApi(body).then(() => {
-      if (state.isLogin) {
-        setState({ visible: false });
-        connect();
-      } else {
-        setState({ isLogin: true });
-      }
-    });
+    callApi(body)
+      .then(() => {
+        toast.error("success");
+        if (state.isLogin) {
+          setState({ visible: false });
+          connect();
+        } else {
+          setState({ isLogin: true });
+        }
+      })
+      .catch((e) => {});
   };
 
   return (
