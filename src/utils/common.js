@@ -79,7 +79,7 @@ export const momentFromNow = (m) => {
 export const getImg = (avatar) => {
   return avatar
     ? `${clientUtils.serverApi}/files/${avatar}`
-    : "https://static.toiimg.com/photo/82343395.cms";
+    : require("@assets/images/default.jpg").default;
 };
 
 Number.prototype.formatPrice = function () {

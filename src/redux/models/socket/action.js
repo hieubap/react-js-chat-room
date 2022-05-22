@@ -24,7 +24,7 @@ export const actionUser =
         dispatch.socket.getListMessage(res.payload[i]?.id);
       }
     } else if (res.type === typeAction.JOIN) {
-      dispatch.socket.updateListRoom(res.payload);
+      dispatch.socket.updateListRoom({ newRoom: res.payload, isNew: true });
     } else if (res.type === typeAction.WARNING) {
       toast.error(res.payload);
     } else if (res.type === typeAction.CHAT) {

@@ -70,11 +70,21 @@ export default {
 
       connect();
     },
-    createRoom: (_, { auth: { auth } }) => {
-      roomProvider.post({ adminId: auth?.userId }).then((res) => {
-        if (res && res.code === 0) {
-          dispatch.socket.updateListRoom(res.data);
-        }
+    createRoom: (listUserId, { auth: { auth } }) => {
+      return new Promise((resolve, reject) => {
+        roomProvider
+          .create({ idAddUsers: listUserId, adminId: auth?.userId })
+          .then((res) => {
+            if (res && res.code === 0) {
+              dispatch.socket.updateListRoom({
+                newRoom: res.data,
+                isNew: true,
+                isAdmin: true,
+              });
+              resolve(res);
+            }
+          })
+          .catch(reject);
       });
     },
     getAllUser: (_) => {
@@ -91,7 +101,26 @@ export default {
         }
       });
     },
-    updateListRoom: ({ newRoom, isNew }, { auth: { auth }, ...state }) => {
+    addUsers: (listUserId, { socket: { currentRoomId } }) => {
+      return new Promise((resolve, reject) => {
+        roomProvider
+          .addUsers(listUserId, currentRoomId)
+          .then((res) => {
+            if (res && res.code === 0) {
+              dispatch.socket.updateData({ currentRoom: res.data });
+              resolve(res.data);
+            } else {
+              toast.error(res.message);
+              reject(res);
+            }
+          })
+          .catch(reject);
+      });
+    },
+    updateListRoom: (
+      { newRoom, isNew, isAdmin },
+      { auth: { auth }, ...state }
+    ) => {
       const { listRoom } = state.socket;
       let newList = [...listRoom];
 
@@ -100,40 +129,59 @@ export default {
         if (indexRoom !== -1) {
           newList.splice(indexRoom, 1);
         }
-        newList = [newRoom, ...listRoom];
+        newList = [newRoom, ...newList];
       } else {
         newList = newRoom;
       }
+      const listRoomMap = newList.map((item) => ({
+        ...item,
+        name:
+          item.connectedUsers?.length === 1
+            ? item.adminId === auth?.userId
+              ? item.connectedUsers[0]?.fullName
+              : item.admin?.fullName
+            : item.connectedUsers?.length === 0
+            ? "Chỉ có bạn"
+            : "Nhóm " + item.id,
+        avatar:
+          item.connectedUsers?.length === 1
+            ? item.adminId === auth?.userId
+              ? item.connectedUsers[0]?.avatar
+              : item.admin?.avatar
+            : item.connectedUsers?.length === 0
+            ? auth.avatar
+            : "",
+      }));
+      let addField = {};
+      if (isAdmin) {
+        addField = { currentRoom: listRoomMap[0], currentRoomId: newRoom?.id };
+        dispatch.socket.getListMessage(newRoom?.id);
+      }
       dispatch.socket.updateData({
-        listRoom: newList.map((item) => ({
-          ...item,
-          name:
-            item.connectedUsers?.length === 1
-              ? item.adminId === auth?.userId
-                ? item.connectedUsers[0]?.fullName
-                : item.admin?.fullName
-              : item.connectedUsers?.length === 0
-              ? "Chỉ có bạn"
-              : "Nhóm " + item.id,
-          avatar:
-            item.connectedUsers?.length === 1
-              ? item.adminId === auth?.userId
-                ? item.connectedUsers[0]?.avatar
-                : item.admin?.avatar
-              : item.connectedUsers?.length === 0
-              ? auth.avatar
-              : "",
-        })),
+        listRoom: listRoomMap,
+        ...addField,
       });
     },
     updateListMessage: (payload, state) => {
-      const { listMessage, currentRoomId } = state.socket;
+      const { listMessage, currentRoomId, listRoom } = state.socket;
 
       if (currentRoomId !== payload.roomId) {
+        const roomReceived = listRoom.find((i) => i.id === payload.roomId);
+        dispatch.socket.updateListRoom({
+          newRoom: {
+            ...roomReceived,
+            lastMessage: payload,
+            lastMessageId: payload.id,
+          },
+          isNew: true,
+        });
         return;
       }
 
-      dispatch.socket.updateData({ listMessage: [...listMessage, payload] });
+      dispatch.socket.updateData({
+        listMessage: [...listMessage, payload],
+        [`messageRoom${payload.roomId}`]: [...listMessage, payload],
+      });
       dispatch.socket.scrollToBottom();
     },
     updateLastSeen: (payload, state) => {
@@ -266,7 +314,7 @@ export default {
               if (roomId === currentRoomId) {
                 dispatch.socket.updateData({
                   listMessage: res.data?.reverse(),
-                  [`messageRoom${roomId}`]: res.data?.reverse(),
+                  [`messageRoom${roomId}`]: res.data,
                 });
               } else
                 dispatch.socket.updateData({

@@ -37,5 +37,108 @@ export const StyledModal = styled.div`
       background-color: white;
       position: relative;
     }
+    .modal-header {
+      border-bottom: 1px solid #ccc;
+      &-text {
+        font-size: 20px;
+        font-weight: 500;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 7px;
+      top: 12px;
+      font-size: 16px;
+      padding: 3px 10px;
+      cursor: pointer;
+      opacity: 0.9;
+      :hover {
+        background-color: #ccc;
+        border-radius: 50%;
+      }
+    }
+
+    .modal-footer {
+      padding: 10px 30px 20px;
+      &-btn {
+        width: 100%;
+        height: 40px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        background-color: rgb(27, 116, 228);
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        :hover {
+          background-color: rgb(7, 107, 230);
+        }
+      }
+    }
+  }
+`;
+
+export const StyledAvatar = styled.div`
+  padding: 5px;
+  display: flex;
+  flex-direction: ${(p) => p.direction};
+  align-items: center;
+  cursor: pointer;
+  .avatar-component {
+    &-wrap {
+      position: relative;
+      .icon-remove {
+        position: absolute;
+        cursor: pointer;
+        top: -3px;
+        right: -3px;
+        background-color: white;
+        z-index: 10;
+        border-radius: 50%;
+        width: 15px;
+        height: 20px;
+        font-size: 15px;
+        padding-left: 5px;
+        box-shadow: 0 0 2px #888;
+        &:hover {
+          background-color: #e0e0e0;
+        }
+      }
+    }
+    &-img {
+      width: ${(p) => p.width + "px"};
+      height: ${(p) => p.width + "px"};
+      border-radius: 50%;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &-content {
+      padding: 0 15px;
+      width: calc(
+        100% - ${(p) => (p.direction === "column" ? 0 : p.width + 30)}px
+      );
+      &-user {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      &-message {
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: calc(100% - 50px);
+        }
+      }
+    }
   }
 `;

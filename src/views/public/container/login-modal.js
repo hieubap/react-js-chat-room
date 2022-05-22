@@ -150,11 +150,11 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
   };
 
   return (
-    <Modal visible={state.visible} height={state.isLogin ? 300 : 450}>
+    <Modal title={state.isLogin ? "Login" : "Register"} visible={state.visible} height={state.isLogin ? 300 : 450}>
       <WrapperLogin>
-        <div className="md-login-header">
+        {/* <div className="md-login-header">
           {state.isLogin ? "Login" : "Register"}
-        </div>
+        </div> */}
         <div className="md-login-body">
           {!state.isLogin && (
             <div

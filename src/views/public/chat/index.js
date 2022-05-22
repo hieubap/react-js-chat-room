@@ -2,9 +2,11 @@ import fileProvider from "@src/data-access/file-provider";
 import { dataURLtoFile, momentFromNow } from "@src/utils/common";
 import { getImg } from "@utils/common";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
 import Message from "./components/message";
+import ModalAddMember from "./modal/member";
 import { WrapperStyled } from "./styled";
 
 let countFile = 1;
@@ -23,17 +25,17 @@ const ChatContainer = ({
   sendMessage,
   getListMessage,
   changeAvatar,
+  addUsers,
 }) => {
   const [state, _setState] = useState({ content: "", listFile: [] });
+  const refModalAddMem = useRef();
+  const refModalNewChat = useRef();
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
   useEffect(() => {
     getAllUser();
   }, []);
-  const handleCreate = () => {
-    createRoom();
-  };
   const handleAddUser = (idUser) => () => {
     addUser(idUser);
   };
@@ -84,6 +86,22 @@ const ChatContainer = ({
     }
   };
 
+  const addMembers = (listId) => {
+    addUsers(listId).then((res) => {
+      if (refModalNewChat.current) {
+        refModalAddMem.current.cancel();
+      }
+    });
+  };
+
+  const newChat = (listId) => {
+    createRoom(listId).then((res) => {
+      if (refModalNewChat.current) {
+        refModalNewChat.current.cancel();
+      }
+    });
+  };
+
   return (
     <WrapperStyled>
       <div className="main-left">
@@ -107,7 +125,8 @@ const ChatContainer = ({
             <i
               className="fa-solid fa-pen-to-square"
               onClick={() => {
-                handleCreate();
+                if (refModalNewChat.current) refModalNewChat.current.show();
+                // handleCreate();
                 // setState({ createRoom: true });
               }}
             ></i>
@@ -122,14 +141,13 @@ const ChatContainer = ({
               <div className="room-item-content">
                 <div className="room-item-content-user">{item.name}</div>
                 <div className="room-item-content-message">
-                  {item?.lastMessage?.fullName && (
-                    <span>
-                      {item?.lastMessage?.fullName?.substring(
-                        item?.lastMessage?.fullName.length - 5
-                      )}
-                      :{" "}
-                    </span>
-                  )}
+                  <span>
+                    {item?.lastMessage?.fullName
+                      ? item?.lastMessage?.fullName?.substring(
+                          item?.lastMessage?.fullName.length - 4
+                        )
+                      : " "}
+                  </span>
                   <span>{item?.lastMessage?.content} </span>
                   <span>
                     . {item.createdAt && momentFromNow(item.createdAt)}
@@ -145,7 +163,7 @@ const ChatContainer = ({
           <div className="main-center-top-img">
             <img src={getImg(currentRoom?.avatar)} />
           </div>
-          <div className="main-center-top-name">{currentRoom?.id}</div>
+          <div className="main-center-top-name">{currentRoom?.name}</div>
         </div>
         <div
           className={`main-center-mid ${
@@ -244,9 +262,9 @@ const ChatContainer = ({
       <div className="main-right">
         <div className="main-right-header">
           <div className="main-center-top-img">
-            <img src="https://akisa.vn/uploads/plugin/product_items/13551/mau-biet-thu-nha-dep-2-tang-hien-dai-bt21377-v2.jpg" />
+            <img src={getImg(currentRoom?.avatar)} />
           </div>
-          <div className="main-right-header-name">Nhóm học thêm</div>
+          <div className="main-right-header-name">{currentRoom?.name}</div>
         </div>
         <div className="main-right-body">
           <div className="collapse-tool-title">Xem thành viên nhóm</div>
@@ -285,12 +303,27 @@ const ChatContainer = ({
                       <span></span>
                     </div>
                   </div>
+                  <div
+                    className="list-user-item-remove"
+                    onClick={() => {
+                      toast.error(
+                        "Tính năng hiện chưa có. DEV bận chưa có thời gian phát triển =))"
+                      );
+                    }}
+                  >
+                    <i className="fa-solid fa-remove"></i>
+                  </div>
                 </div>
               ))}
-              <div className="list-user-item">
+              <div
+                className="list-user-item"
+                onClick={() => {
+                  console.log("click ...");
+                  if (refModalAddMem.current) refModalAddMem.current.show({});
+                }}
+              >
                 <div className="list-user-item-img">
                   <i className="fa-solid fa-plus"></i>
-                  {/* <img src="https://akisa.vn/uploads/plugin/product_items/13551/mau-biet-thu-nha-dep-2-tang-hien-dai-bt21377-v2.jpg" /> */}
                 </div>
                 <div className="list-user-item-content">
                   <div className="list-user-item-content-user">
@@ -303,32 +336,18 @@ const ChatContainer = ({
               </div>
             </div>
           )}
-          <div className="collapse-tool-title">Thêm thành viên nhóm</div>
-          {currentRoomId && (
-            <div className="list-user">
-              {listAllUser.map((item, key) => (
-                <div
-                  key={key}
-                  className="list-user-item"
-                  onClick={handleAddUser(item.id)}
-                >
-                  <div className="list-user-item-img">
-                    <img src={getImg(item?.avatar)} />
-                  </div>
-                  <div className="list-user-item-content">
-                    <div className="list-user-item-content-user">
-                      {item.fullName}
-                    </div>
-                    <div className="list-user-item-content-message">
-                      <span></span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
+      <ModalAddMember
+        ref={refModalAddMem}
+        onSubmit={addMembers}
+        title="Thêm người"
+      />
+      <ModalAddMember
+        ref={refModalNewChat}
+        onSubmit={newChat}
+        title="Hội thoại mới"
+      />
     </WrapperStyled>
   );
 };
@@ -354,6 +373,7 @@ export default connect(
       sendMessage,
       getListMessage,
       updateData,
+      addUsers,
     },
   }) => ({
     createRoom,
@@ -363,5 +383,6 @@ export default connect(
     updateData,
     sendMessage,
     changeAvatar,
+    addUsers,
   })
 )(ChatContainer);

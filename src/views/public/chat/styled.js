@@ -72,7 +72,7 @@ export const WrapperStyled = styled.div`
           }
           &-content {
             padding: 0 0 0 15px;
-            width: calc(100% - 68px);
+            width: calc(100% - 70px);
             &-user {
               font-size: 16px;
               font-weight: 500;
@@ -173,7 +173,7 @@ export const WrapperStyled = styled.div`
                 :hover {
                   img {
                     transform: scale(1.1);
-                    filter: brightness(80%)
+                    filter: brightness(80%);
                   }
                 }
               }
@@ -490,7 +490,6 @@ export const WrapperStyled = styled.div`
           font-size: 14px;
           font-weight: 600;
           padding: 0px 15px;
-          cursor: pointer;
         }
         &-title:hover {
           background-color: #ccc;
@@ -501,12 +500,6 @@ export const WrapperStyled = styled.div`
           padding: 5px 15px;
           display: flex;
           align-items: center;
-          cursor: pointer;
-          i {
-            font-size: 20px;
-            padding: 8px 9px;
-            background-color: #e0e0e0;
-          }
           &-img {
             width: 36px;
             height: 36px;
@@ -516,10 +509,25 @@ export const WrapperStyled = styled.div`
               width: 100%;
               height: 100%;
             }
+            i {
+              font-size: 20px;
+              padding: 8px 9px;
+              background-color: #e0e0e0;
+            }
+          }
+          &-remove {
+            i {
+              cursor: pointer;
+              display: none;
+              padding: 3px 5px;
+              font-size: 12px;
+              background-color: #e0e0e0;
+              border-radius: 50%;
+            }
           }
           &-content {
             padding: 0 15px;
-            width: calc(100% - 78px);
+            width: calc(100% - 82px);
             &-user {
               font-size: 13px;
               font-weight: 500;
@@ -537,9 +545,17 @@ export const WrapperStyled = styled.div`
           }
           :hover {
             background-color: #f7f7f7;
+            .list-user-item-remove {
+              i {
+                display: block;
+              }
+            }
           }
           &-active {
             background-color: blue;
+          }
+          &:last-child {
+            cursor: pointer;
           }
         }
       }
