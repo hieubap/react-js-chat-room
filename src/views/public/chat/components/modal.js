@@ -24,11 +24,18 @@ const Modal = ({
               <i className="fa fa-times"></i>
             </div>
             {children}
+
             <div className="modal-footer">
+              <div className="modal-footer-text" onClick={onOk}>
+                {okText}
+              </div>
+              <span className="modal-footer-effect"></span>
+            </div>
+            {/* <div className="modal-footer">
               <button className="modal-footer-btn" onClick={onOk}>
                 {okText}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

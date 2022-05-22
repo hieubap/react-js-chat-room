@@ -87,6 +87,10 @@ const ChatContainer = ({
   };
 
   const addMembers = (listId) => {
+    if (listId?.length === 0) {
+      toast.error("Chưa chọn người dùng");
+      return;
+    }
     addUsers(listId).then((res) => {
       if (refModalNewChat.current) {
         refModalAddMem.current.cancel();
@@ -95,6 +99,10 @@ const ChatContainer = ({
   };
 
   const newChat = (listId) => {
+    if (listId?.length === 0) {
+      toast.error("Chưa chọn người dùng");
+      return;
+    }
     createRoom(listId).then((res) => {
       if (refModalNewChat.current) {
         refModalNewChat.current.cancel();

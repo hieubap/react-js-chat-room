@@ -150,7 +150,18 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
   };
 
   return (
-    <Modal title={state.isLogin ? "Login" : "Register"} visible={state.visible} height={state.isLogin ? 300 : 450}>
+    <Modal
+      title={state.isLogin ? "Login" : "Register"}
+      visible={state.visible}
+      height={state.isLogin ? 300 : 450}
+      onOk={() => {
+        if (state.isLogin) {
+          window.location.href =
+            "http://192.168.1.71:8000/chat-server/oauth2/authorize/hoang?redirect_uri=http://localhost:3000/oauth2/redirect";
+        } else setState({ isLogin: !state.isLogin, isSubmit: false });
+      }}
+      okText={state.isLogin ? "Auth" : "Login"}
+    >
       <WrapperLogin>
         {/* <div className="md-login-header">
           {state.isLogin ? "Login" : "Register"}
@@ -230,7 +241,7 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
                 Sign Up
               </span>
             </div>
-            <div className="md-login-switch">
+            {/* <div className="md-login-switch">
               <div
                 className="md-login-switch-text"
                 onClick={() =>
@@ -241,11 +252,11 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
                 Auth
               </div>
               <span className="md-login-switch-effect"></span>
-            </div>
+            </div> */}
           </>
         ) : (
           <>
-            <div className="md-login-switch">
+            {/* <div className="md-login-switch">
               <div
                 className="md-login-switch-text"
                 onClick={() => setState({ isLogin: true, isSubmit: false })}
@@ -253,7 +264,7 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
                 Login
               </div>
               <span className="md-login-switch-effect"></span>
-            </div>
+            </div> */}
           </>
         )}
       </WrapperLogin>

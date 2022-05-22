@@ -64,7 +64,7 @@ export const StyledModal = styled.div`
     }
 
     .modal-footer {
-      padding: 10px 30px 20px;
+      /* padding: 10px 30px 20px;
       &-btn {
         width: 100%;
         height: 40px;
@@ -78,6 +78,37 @@ export const StyledModal = styled.div`
         cursor: pointer;
         :hover {
           background-color: rgb(7, 107, 230);
+        }
+      } */
+
+      position: absolute;
+      width: 100%;
+      padding: 5px;
+      bottom: 0;
+      background: #188754;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+      span:before {
+        background-color: white;
+      }
+      &-text {
+        position: relative;
+        z-index: 1;
+      }
+      &-effect {
+        width: 0;
+        height: 3px;
+        left: 50%;
+        bottom: 0;
+        position: absolute;
+        background-color: #50a3b9;
+        transition: all 0.5s;
+      }
+      &:hover {
+        .modal-footer-effect {
+          width: 50%;
+          left: 25%;
         }
       }
     }

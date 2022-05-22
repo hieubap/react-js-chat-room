@@ -7,10 +7,11 @@ const Oauth = ({ onLogin }) => {
   useEffect(() => {
     const param = parseUrlParams();
     console.log(param, "param");
-    onLogin(param);
+    localStorage.setItem("auth", JSON.stringify({ token: param.token }));
+    // onLogin(param);
   }, []);
 
-  return <TimeGrid>OAUTH</TimeGrid>;
+  return <div>OAUTH</div>;
 };
 
 export default connect(

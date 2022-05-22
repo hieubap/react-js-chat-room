@@ -54,6 +54,7 @@ export default {
         .catch((e) => {
           if (e && e.status === 401) {
             localStorage.clear();
+            window.location.reload();
             // window.location.href = "/auth/login";
           }
           reject(e);
@@ -95,7 +96,7 @@ export default {
           s.json()
             .then((val) => {
               if (val.code === 401) {
-                localStorage.clear();
+                // localStorage.clear();
                 // window.location.href = "/auth/login";
               }
               resolve(val);
@@ -106,7 +107,7 @@ export default {
         })
         .catch((e) => {
           if (e && e.status === 401) {
-            localStorage.clear();
+            // localStorage.clear();
             // window.location.href = "/auth/login";
           }
           reject(e);

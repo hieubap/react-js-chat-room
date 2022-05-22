@@ -16,7 +16,7 @@ const Public = ({ auth, getDeviceInfo, connectSocket, checkLogout }) => {
   useEffect(() => {
     if (auth?.userId) {
       console.log(auth, "auth");
-      connectSocket();
+      // connectSocket();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
