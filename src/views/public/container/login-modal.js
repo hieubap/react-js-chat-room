@@ -138,7 +138,6 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
     const body = { username, password, ...(state.isLogin ? {} : { fullName }) };
     callApi(body)
       .then(() => {
-        toast.error("success");
         if (state.isLogin) {
           setState({ visible: false });
           connect();

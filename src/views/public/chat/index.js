@@ -20,7 +20,6 @@ const ChatContainer = ({
   currentRoom,
   createRoom,
   getAllUser,
-  addUser,
   updateData,
   sendMessage,
   getListMessage,
@@ -36,9 +35,6 @@ const ChatContainer = ({
   useEffect(() => {
     getAllUser();
   }, []);
-  const handleAddUser = (idUser) => () => {
-    addUser(idUser);
-  };
   const selectRoom = (room) => () => {
     updateData({ currentRoomId: room?.id, currentRoom: room });
     getListMessage(room?.id);
@@ -110,6 +106,28 @@ const ChatContainer = ({
     });
   };
 
+  const onScroll = (e, forceLoad) => {
+    if (
+      e.target.scrollTop < 100 &&
+      (!state.loading || forceLoad) &&
+      !currentRoom?.full
+    ) {
+      setState({ loading: true });
+      const scrollDiv = document.getElementById("id-content-chat-message");
+      const from = scrollDiv.scrollHeight;
+      getListMessage({ loadMore: true }).then(() => {
+        e.target.scrollTo({ top: scrollDiv.scrollHeight - from - 50 });
+        setTimeout(() => {
+          if (e.target.scrollTop < 100) {
+            onScroll(e, true);
+          } else {
+            setState({ loading: false });
+          }
+        }, 1000);
+      });
+    }
+  };
+
   return (
     <WrapperStyled>
       <div className="main-left">
@@ -177,8 +195,21 @@ const ChatContainer = ({
           className={`main-center-mid ${
             state.listFile?.length > 0 ? "main-center-mid-visible-file" : ""
           }`}
+          onScroll={onScroll}
         >
-          <div id="id-content-chat-message" className="content-message">
+          <div
+            id="id-content-chat-message"
+            className="content-message"
+            onScroll={(e) => {
+              console.log("scroll Id ....");
+            }}
+          >
+            {!currentRoom?.full && (
+              <div className="content-message-loading">
+                LOADING
+                <i className="fas fa-spinner" />
+              </div>
+            )}
             {listMessage.map((item, idx) => (
               <Message
                 key={idx}
@@ -278,10 +309,7 @@ const ChatContainer = ({
           <div className="collapse-tool-title">Xem thành viên nhóm</div>
           {currentRoomId && (
             <div className="list-user">
-              <div
-                className="list-user-item"
-                // onClick={handleAddUser(item.id)}
-              >
+              <div className="list-user-item">
                 <div className="list-user-item-img">
                   <img src={getImg(currentRoom?.admin?.avatar)} />
                 </div>
@@ -295,11 +323,7 @@ const ChatContainer = ({
                 </div>
               </div>
               {currentRoom?.connectedUsers?.map((item, key) => (
-                <div
-                  key={key}
-                  className="list-user-item"
-                  // onClick={handleAddUser(item.id)}
-                >
+                <div key={key} className="list-user-item">
                   <div className="list-user-item-img">
                     <img src={getImg(item?.avatar)} />
                   </div>
@@ -326,7 +350,6 @@ const ChatContainer = ({
               <div
                 className="list-user-item"
                 onClick={() => {
-                  console.log("click ...");
                   if (refModalAddMem.current) refModalAddMem.current.show({});
                 }}
               >
@@ -377,7 +400,6 @@ export default connect(
     socket: {
       createRoom,
       getAllUser,
-      addUser,
       sendMessage,
       getListMessage,
       updateData,
@@ -386,7 +408,6 @@ export default connect(
   }) => ({
     createRoom,
     getAllUser,
-    addUser,
     getListMessage,
     updateData,
     sendMessage,

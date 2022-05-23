@@ -21,7 +21,7 @@ export const actionUser =
     if (res.type === typeAction.LIST_ROOM) {
       dispatch.socket.updateListRoom({ newRoom: res.payload });
       for (let i = 0; i < res.payload?.length; i++) {
-        dispatch.socket.getListMessage(res.payload[i]?.id);
+        dispatch.socket.getListMessage({ roomId: res.payload[i]?.id });
       }
     } else if (res.type === typeAction.JOIN) {
       dispatch.socket.updateListRoom({ newRoom: res.payload, isNew: true });

@@ -13,6 +13,7 @@ import { getImg } from "@src/utils/common";
 // import { message } from "antd";
 
 const refTimeout = createRef();
+const refReconnect = createRef();
 
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
@@ -32,7 +33,7 @@ export default {
     },
   },
   effects: (dispatch) => ({
-    connect: (payload = {}, state) => {
+    connect: ({ reconnect } = {}, state) => {
       var stompClient = null;
       var socket = null;
       const { userId, deviceInfoId } = state.auth?.auth || {};
@@ -62,10 +63,24 @@ export default {
 
           stompClient.send("/app/list.room." + userId, {}, {});
         }
+        if (reconnect) {
+          clearInterval(refReconnect.current);
+          refReconnect.current = null;
+          reconnect = false;
+          toast.success("Đã khôi phục kết nối lại");
+        }
       };
 
       function stompFailure(error) {
-        toast.error("Hệ thống đang bảo trì. Xin vui lòng chờ ...");
+        if (!refReconnect.current) {
+          refReconnect.current = setInterval(() => {
+            dispatch.socket.connect({ reconnect: true });
+          }, 5000);
+        }
+
+        if (!reconnect) {
+          toast.error("Bị mất kết nối. Xin vui lòng chờ ...");
+        }
       }
 
       connect();
@@ -94,13 +109,6 @@ export default {
         }
       });
     },
-    addUser: (userId, { socket: { currentRoomId } }) => {
-      roomProvider.addUser(userId, currentRoomId).then((res) => {
-        if (res && res.code === 0) {
-          //   dispatch.socket.updateData({ listAllUser: res.data });
-        }
-      });
-    },
     addUsers: (listUserId, { socket: { currentRoomId } }) => {
       return new Promise((resolve, reject) => {
         roomProvider
@@ -116,73 +124,6 @@ export default {
           })
           .catch(reject);
       });
-    },
-    updateListRoom: (
-      { newRoom, isNew, isAdmin },
-      { auth: { auth }, ...state }
-    ) => {
-      const { listRoom } = state.socket;
-      let newList = [...listRoom];
-
-      if (isNew) {
-        const indexRoom = newList.findIndex((item) => item.id === newRoom.id);
-        if (indexRoom !== -1) {
-          newList.splice(indexRoom, 1);
-        }
-        newList = [newRoom, ...newList];
-      } else {
-        newList = newRoom;
-      }
-      const listRoomMap = newList.map((item) => ({
-        ...item,
-        name:
-          item.connectedUsers?.length === 1
-            ? item.adminId === auth?.userId
-              ? item.connectedUsers[0]?.fullName
-              : item.admin?.fullName
-            : item.connectedUsers?.length === 0
-            ? "Chỉ có bạn"
-            : "Nhóm " + item.id,
-        avatar:
-          item.connectedUsers?.length === 1
-            ? item.adminId === auth?.userId
-              ? item.connectedUsers[0]?.avatar
-              : item.admin?.avatar
-            : item.connectedUsers?.length === 0
-            ? auth.avatar
-            : "",
-      }));
-      let addField = {};
-      if (isAdmin) {
-        addField = { currentRoom: listRoomMap[0], currentRoomId: newRoom?.id };
-        dispatch.socket.getListMessage(newRoom?.id);
-      }
-      dispatch.socket.updateData({
-        listRoom: listRoomMap,
-        ...addField,
-      });
-    },
-    updateListMessage: (payload, state) => {
-      const { listMessage, currentRoomId, listRoom } = state.socket;
-
-      if (currentRoomId !== payload.roomId) {
-        const roomReceived = listRoom.find((i) => i.id === payload.roomId);
-        dispatch.socket.updateListRoom({
-          newRoom: {
-            ...roomReceived,
-            lastMessage: payload,
-            lastMessageId: payload.id,
-          },
-          isNew: true,
-        });
-        return;
-      }
-
-      dispatch.socket.updateData({
-        listMessage: [...listMessage, payload],
-        [`messageRoom${payload.roomId}`]: [...listMessage, payload],
-      });
-      dispatch.socket.scrollToBottom();
     },
     updateLastSeen: (payload, state) => {
       const { listMessage, currentRoomId } = state.socket;
@@ -284,50 +225,168 @@ export default {
           ?.scrollIntoView({ block: "end", behavior: "smooth" });
       });
     },
+    // lấy danh sách phòng khi kết nối
+    // nhận 1 tin nhắn từ socket
+    // tạo phòng mới
+    // nhận event join nhóm từ socket
+    updateListRoom: (
+      { newRoom, isNew, isAdmin },
+      { auth: { auth }, ...state }
+    ) => {
+      const { listRoom } = state.socket;
+      let newList = [...listRoom];
+
+      if (isNew) {
+        const indexRoom = newList.findIndex((item) => item.id === newRoom.id);
+        if (indexRoom !== -1) {
+          newList.splice(indexRoom, 1);
+        }
+        newList = [newRoom, ...newList];
+      } else {
+        newList = newRoom; // newRoom là mảng danh sách các phòng khi kết nối
+      }
+      const customListRoom = newList.map((item) => ({
+        ...item,
+        name:
+          item.connectedUsers?.length === 1
+            ? item.adminId === auth?.userId
+              ? item.connectedUsers[0]?.fullName
+              : item.admin?.fullName
+            : item.connectedUsers?.length === 0
+            ? "Chỉ có bạn"
+            : "Nhóm " + item.id,
+        avatar:
+          item.connectedUsers?.length === 1
+            ? item.adminId === auth?.userId
+              ? item.connectedUsers[0]?.avatar
+              : item.admin?.avatar
+            : item.connectedUsers?.length === 0
+            ? auth.avatar
+            : "",
+      }));
+      let addField = {};
+      if (isAdmin) {
+        //khi người dùng tạo phòng mới
+        addField = {
+          currentRoom: customListRoom[0],
+          currentRoomId: newRoom?.id,
+        };
+        dispatch.socket.getListMessage({ roomId: newRoom?.id });
+      }
+      dispatch.socket.updateData({
+        listRoom: customListRoom,
+        ...addField,
+      });
+    },
+    // nhận 1 tin từ socket
+    updateListMessage: (payload, state) => {
+      const { listMessage, currentRoomId, listRoom } = state.socket;
+
+      const roomReceived = listRoom.find((i) => i.id === payload.roomId);
+      dispatch.socket.updateListRoom({
+        newRoom: {
+          ...roomReceived,
+          lastMessage: payload,
+          lastMessageId: payload.id,
+        },
+        isNew: true,
+      });
+
+      if (currentRoomId !== payload.roomId) {
+        dispatch.socket.updateData({
+          [`messageRoom${payload.roomId}`]: [
+            ...state.socket[`messageRoom${payload.roomId}`],
+            payload,
+          ],
+        });
+        return;
+      }
+
+      dispatch.socket.updateData({
+        listMessage: [...listMessage, payload],
+        [`messageRoom${payload.roomId}`]: [...listMessage, payload],
+      });
+      dispatch.socket.scrollToBottom();
+    },
     getListMessage: (
-      roomId,
+      { roomId, loadMore } = {},
       {
         auth: { auth },
-        socket: { currentRoomId, stompClient, listMessage, ...rest },
+        socket: {
+          currentRoom,
+          currentRoomId,
+          stompClient,
+          listMessage = [],
+          ...rest
+        },
       }
     ) => {
-      if (rest[`messageRoom${roomId}`]) {
-        dispatch.socket.updateData({
-          listMessage: rest[`messageRoom${roomId}`],
-        });
-        setTimeout(() => {
-          dispatch.socket.scrollToBottom();
-          const listMess = rest[`messageRoom${roomId}`];
-          dispatch.socket.sendlastSeen({
-            messageId: listMess[listMess?.length - 1]?.id,
-            roomId: listMess[listMess?.length - 1]?.roomId,
+      return new Promise((resolve) => {
+        const customRoomId = roomId || currentRoomId;
+        if (customRoomId == currentRoomId && currentRoom.full) {
+          // nếu load hết tin nhắn cũ của phòng hiện tại thì stop
+          resolve();
+          return;
+        }
+        if (rest[`messageRoom${customRoomId}`] && !loadMore) {
+          // chọn phòng khác
+          dispatch.socket.updateData({
+            listMessage: rest[`messageRoom${customRoomId}`],
           });
-        }, 100);
-      } else {
-        dispatch.socket.updateData({
-          [`messageRoom${roomId}`]: [],
-        });
-        messageProvider
-          .search({ roomId, sort: "createdAt,desc", size: 20 })
-          .then((res) => {
-            if (res && res.code === 0) {
-              if (roomId === currentRoomId) {
-                dispatch.socket.updateData({
-                  listMessage: res.data?.reverse(),
-                  [`messageRoom${roomId}`]: res.data,
-                });
-              } else
-                dispatch.socket.updateData({
-                  [`messageRoom${roomId}`]: res.data?.reverse(),
-                });
-              dispatch.socket.sendlastSeen({
-                messageId: res.data[res.data?.length - 1]?.id,
-                roomId: res.data[res.data?.length - 1]?.roomId,
-              });
-              dispatch.socket.scrollToBottom();
-            }
-          });
-      }
+          setTimeout(() => {
+            dispatch.socket.scrollToBottom();
+            const listMess = rest[`messageRoom${customRoomId}`];
+            dispatch.socket.sendlastSeen({
+              messageId: listMess[listMess?.length - 1]?.id,
+              roomId: listMess[listMess?.length - 1]?.roomId,
+            });
+          }, 100);
+          resolve();
+        } else {
+          // loadmore phòng hiện tại
+          // lấy old message khi kết nối
+          const page = loadMore ? (currentRoom?.page || 0) + 1 : 0;
+          messageProvider
+            .search({
+              roomId: customRoomId,
+              sort: "createdAt,desc",
+              page,
+              size: 20,
+            })
+            .then((res) => {
+              if (res && res.code === 0) {
+                if (customRoomId === currentRoomId) {
+                  dispatch.socket.updateData({
+                    listMessage: [...res.data?.reverse(), ...listMessage],
+                    [`messageRoom${roomId}`]: [...res.data, ...listMessage],
+                  });
+                } else
+                  dispatch.socket.updateData({
+                    [`messageRoom${roomId}`]: res.data?.reverse(),
+                  });
+                if (loadMore) {
+                  dispatch.socket.updateData({
+                    [`messageRoom${customRoomId}`]: [],
+                    currentRoom: {
+                      ...currentRoom,
+                      page,
+                      full: res.data?.length === 0,
+                    },
+                  });
+                }
+                resolve();
+                // if (page === 0) {
+                //   dispatch.socket.sendlastSeen({
+                //     messageId: res.data[res.data?.length - 1]?.id,
+                //     roomId: res.data[res.data?.length - 1]?.roomId,
+                //   });
+                //   dispatch.socket.scrollToBottom();
+                // }
+              }
+            })
+            .catch(resolve);
+        }
+      });
     },
     sendlastSeen: (
       { messageId, roomId },
@@ -343,7 +402,7 @@ export default {
     },
     sendMessage: (
       { content, type } = {},
-      { auth: { auth }, socket: { stompClient, currentRoomId } }
+      { auth: { auth }, socket: { stompClient, currentRoomId, currentRoom } }
     ) => {
       if (!currentRoomId) {
         toast.error("chưa chọn phòng");

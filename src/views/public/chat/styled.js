@@ -139,6 +139,15 @@ export const WrapperStyled = styled.div`
         height: calc(100% - 200px);
       }
       .content-message {
+        &-loading {
+          height: 50px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          i {
+            margin-left: 10px;
+          }
+        }
         &-item {
           padding: 6px 10px;
           display: flex;

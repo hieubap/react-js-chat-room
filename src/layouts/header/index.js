@@ -41,6 +41,12 @@ const Header = ({ auth }) => {
           <div className="wrapper-item">
             <div className="wrapper-item-content">{auth?.full_name}</div>
           </div>
+          <div className="wrapper-item" onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}>
+            <div className="wrapper-item-content">Logout</div>
+          </div>
         </div>
       </div>
     </WrapperHeader>

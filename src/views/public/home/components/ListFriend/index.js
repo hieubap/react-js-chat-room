@@ -15,11 +15,7 @@ const ListFriend = ({ currentRoom, listData, getList }) => {
         <div className="list-user">
           {[...listData, ...listData, ...listData, ...listData]?.map(
             (item, key) => (
-              <div
-                key={key}
-                className="list-user-item"
-                // onClick={handleAddUser(item.id)}
-              >
+              <div key={key} className="list-user-item">
                 <div className="list-user-item-img">
                   <img src={getImg(item?.avatar)} />
                 </div>
