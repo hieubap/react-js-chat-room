@@ -59,32 +59,29 @@ export default {
         authProvider
           .register(payload)
           .then((res) => {
-            if (res && res.code === 0) {
-              toast.success(
-                "Đăng ký thành công. Vui lòng đăng nhập vào hệ thống"
-              );
-              resolve(res);
-            } else {
-              toast.error(res.message);
-              reject(res);
-            }
+            toast.success(
+              "Đăng ký thành công. Vui lòng đăng nhập vào hệ thống"
+            );
+            resolve(res);
           })
-          .catch(reject);
+          .catch((e) => {
+            toast.error("Đã có lỗi xảy ra");
+            reject(e);
+          });
       });
     },
     changeAvatar: (file, { auth: { auth } }) => {
       authProvider.changeAvatar(file).then((res) => {
-        if (res && res.code === 0) {
-          dispatch.auth.updateData({
-            auth: { ...auth, avatar: res.data?.avatar },
-          });
-          localStorage.setItem(
-            "auth",
-            JSON.stringify({ ...auth, avatar: res.data?.avatar })
-          );
+        
+        dispatch.auth.updateData({
+          auth: { ...auth, avatar: res.fileId },
+        });
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({ ...auth, avatar: res.fileId })
+        );
 
-          toast.success("Đổi ảnh đại diện thành công");
-        }
+        toast.success("Đổi ảnh đại diện thành công");
       });
     },
   }),

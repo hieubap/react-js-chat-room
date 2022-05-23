@@ -222,7 +222,7 @@ const Post = ({
           <div className="left-comment">
             <div className="avatar">
               <img
-                src={getImg(auth?.avatar)}
+                src={getImg(auth?.image)}
                 alt=""
                 className="frame-header-avt"
               />

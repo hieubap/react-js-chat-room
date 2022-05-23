@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
 import { WrapperHeader } from "./styled";
+import authProvider from "@data-access/auth-provider";
 
 const Header = ({ auth }) => {
   const [activeKey, setActiveKey] = useState();
@@ -39,7 +40,17 @@ const Header = ({ auth }) => {
         </div>
         <div className="main-header-right">
           <div className="wrapper-item">
-            <div className="wrapper-item-content">{auth?.full_name}</div>
+            <div className="wrapper-item-content">
+              {auth?.fullName}/{auth?.username}
+            </div>
+          </div>
+          <div
+            className="wrapper-item"
+            onClick={() => {
+              authProvider.logout();
+            }}
+          >
+            <div className="wrapper-item-content">Logout</div>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ const Root = () => {
       <Provider store={stores}>
         <BrowserRouter>
           <Switch>
-            <Route exact path="/sso" render={(props) => <Oauth {...props} />} />
+            <Route exact path="/oauth2/redirect" render={(props) => <Oauth {...props} />} />
             <Route path="/p" render={(props) => <PublicLayout {...props} />} />
             <Redirect to="/p/home" />
           </Switch>

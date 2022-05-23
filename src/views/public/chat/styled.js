@@ -21,14 +21,16 @@ export const WrapperStyled = styled.div`
           height: 60px;
           display: flex;
           align-items: center;
+          justify-content: space-between;
           padding: 0 10px;
           input[type="file"] {
             display: none;
           }
           i {
-            font-size: 20px;
+            font-size: 24px;
             margin-left: auto;
             cursor: pointer;
+            margin-left: 10px;
           }
           &-img {
             width: 48px;

@@ -1,8 +1,12 @@
+import authProvider from "@src/data-access/auth-provider";
+import { pathAuthLogin } from "@src/utils/client-utils";
+import { getImg } from "@src/utils/common";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import Modal from "../chat/components/modal";
+
 
 const WrapperLogin = styled.div`
   padding-bottom: 50px;
@@ -44,6 +48,30 @@ const WrapperLogin = styled.div`
       }
       .danger {
         color: red;
+      }
+    }
+    .wrap-upload {
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 10px;
+      input[type="file"] {
+        display: none;
+      }
+      &-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+        label {
+          cursor: pointer;
+        }
       }
     }
   }
@@ -107,11 +135,12 @@ const WrapperLogin = styled.div`
   }
 `;
 
-const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
+const AuthModal = ({ onLogin, onRegister, auth, connect, changeAvatar }) => {
   const [state, _setState] = useState({
     isLogin: true,
-    visible: !auth?.userId,
+    visible: !auth?.token,
   });
+  console.log(auth, "auth modal login");
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
@@ -135,14 +164,23 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
       return;
     }
     const callApi = state.isLogin ? onLogin : onRegister;
-    const body = { username, password, ...(state.isLogin ? {} : { fullName }) };
+    const body = {
+      username,
+      password,
+      ...(state.isLogin
+        ? {}
+        : { fullname: fullName, image: state.imageDetail?.fileId }),
+    };
     callApi(body)
       .then(() => {
-        toast.error("success");
         if (state.isLogin) {
           setState({ visible: false });
           connect();
         } else {
+          setTimeout(() => {
+            window.location.href = pathAuthLogin;
+          }, 2000);
+
           setState({ isLogin: true });
         }
       })
@@ -156,8 +194,7 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
       height={state.isLogin ? 300 : 450}
       onOk={() => {
         if (state.isLogin) {
-          window.location.href =
-            "http://192.168.1.71:8000/chat-server/oauth2/authorize/hoang?redirect_uri=http://localhost:3000/oauth2/redirect";
+          window.location.href = pathAuthLogin;
         } else setState({ isLogin: !state.isLogin, isSubmit: false });
       }}
       okText={state.isLogin ? "Auth" : "Login"}
@@ -167,6 +204,24 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
           {state.isLogin ? "Login" : "Register"}
         </div> */}
         <div className="md-login-body">
+          <div className="wrap-upload">
+            <div className="wrap-upload-img">
+              <label htmlFor="upload-avatar">
+                <img src={getImg("")} />
+              </label>
+            </div>
+            <input
+              id="upload-avatar"
+              type="file"
+              onChange={(e) => {
+                const [file] = e.target.files;
+                authProvider.changeAvatar(file).then((res) => {
+                  setState({ imageDetail: res });
+                });
+              }}
+            />
+          </div>
+
           {!state.isLogin && (
             <div
               className={`md-login-body-input ${
@@ -274,9 +329,10 @@ const AuthModal = ({ onLogin, onRegister, auth, connect }) => {
 
 export default connect(
   ({ auth: { auth } }) => ({ auth }),
-  ({ auth: { onLogin, onRegister }, socket: { connect } }) => ({
+  ({ auth: { onLogin, onRegister, changeAvatar }, socket: { connect } }) => ({
     onLogin,
     onRegister,
     connect,
+    changeAvatar,
   })
 )(AuthModal);

@@ -33,7 +33,7 @@ const ModalMember = (
 
   const handleAddUser = () => {
     onSubmit(
-      state.listSelect.map((i) => i.id),
+      state.listSelect.map((i) => i.userId),
       state.listSelect,
       close
     );
@@ -75,8 +75,8 @@ const ModalMember = (
           {state.listSelect?.length > 0 ? (
             state.listSelect.map((item) => (
               <Avatar
-                src={getImg(item.avatar)}
-                name={item.fullName}
+                src={getImg(item?.image)}
+                name={item?.fullName}
                 onRemove={clickCheckbox(item)}
                 direction="column"
                 width={40}
@@ -91,17 +91,21 @@ const ModalMember = (
           {listAllUser
             .filter(
               (i) =>
-                i.fullName
-                  .toLowerCase()
+                i?.fullName
+                  ?.toLowerCase()
                   ?.indexOf(state.searchText?.toLowerCase()) !== -1
             )
-            .map((item) => (
-              <div className="member-item">
-                <Avatar src={getImg(item.avatar)} name={item.fullName}></Avatar>
+            .map((item, key) => (
+              <div key={key} className="member-item">
+                <Avatar
+                  src={getImg(item?.image)}
+                  name={item?.fullName}
+                ></Avatar>
                 <input
                   type="checkbox"
                   checked={state.listSelect.some((i) => i.id === item.id)}
                   onClick={clickCheckbox(item)}
+                  onChange={() => {}}
                 />
               </div>
             ))}
@@ -112,7 +116,7 @@ const ModalMember = (
 };
 
 export default connect(
-  ({ socket: { listAllUser } }) => ({ listAllUser }),
+  ({ socket: { allUser: listAllUser } }) => ({ listAllUser }),
   ({ socket: { addUsers } }) => ({ addUsers }),
   null,
   {

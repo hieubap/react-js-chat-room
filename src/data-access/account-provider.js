@@ -11,11 +11,7 @@ export default {
       clientUtils
         .requestApi(
           "get",
-          combineUrlParams(`${API.account}`, {
-            page,
-            size: 999,
-            ...param,
-          }),
+          `/chat-server/api/v1/user/get-users-is-not-friend`,
           {}
         )
         .then((x) => {

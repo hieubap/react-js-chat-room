@@ -8,7 +8,7 @@ export default {
       formData.append("file", file);
 
       clientUtils
-        .upload("post", `/file/upload`, formData)
+        .upload("post", "/auth-server/api/v1/file/uploadFile", formData)
         .then((x) => {
           resolve(x);
         })

@@ -26,22 +26,28 @@ const ChatContainer = ({
   getListMessage,
   changeAvatar,
   addUsers,
+  addFriend,
+  myFiend,
+  allMyFriend,
 }) => {
-  const [state, _setState] = useState({ content: "", listFile: [] });
+  const [state, _setState] = useState({ content: "", listFile: [], page: 0 });
   const refModalAddMem = useRef();
   const refModalNewChat = useRef();
+  const refModalAddFriend = useRef();
   const setState = (data) => {
     _setState((pre) => ({ ...pre, ...data }));
   };
   useEffect(() => {
+    myFiend();
     getAllUser();
   }, []);
   const handleAddUser = (idUser) => () => {
     addUser(idUser);
   };
   const selectRoom = (room) => () => {
-    updateData({ currentRoomId: room?.id, currentRoom: room });
-    getListMessage(room?.id);
+    console.log(room, "room");
+    updateData({ currentRoomId: room?.userId, currentRoom: room });
+    getListMessage({ roomId: room?.userId });
   };
   const onPasteClipboard = (pasteEvent) => {
     var item = pasteEvent.clipboardData.items[0];
@@ -110,6 +116,14 @@ const ChatContainer = ({
     });
   };
 
+  const onAddFriend = (listId) => {
+    if (listId?.length === 0) {
+      toast.error("Chưa chọn người dùng");
+      return;
+    }
+    addFriend({ listId });
+  };
+
   return (
     <WrapperStyled>
       <div className="main-left">
@@ -118,10 +132,10 @@ const ChatContainer = ({
           <div className="room-header-top">
             <div className="room-header-top-img">
               <label htmlFor="upload-avatar">
-                <img src={getImg(auth?.avatar)} />
+                <img src={getImg(auth?.image)} />
               </label>
             </div>
-            <div className="room-header-top-name">{auth?.full_name}</div>
+            <div className="room-header-top-name">{auth?.fullName || " "}</div>
             <input
               id="upload-avatar"
               type="file"
@@ -130,24 +144,33 @@ const ChatContainer = ({
                 changeAvatar(file);
               }}
             />
-            <i
-              className="fa-solid fa-pen-to-square"
-              onClick={() => {
-                if (refModalNewChat.current) refModalNewChat.current.show();
-                // handleCreate();
-                // setState({ createRoom: true });
-              }}
-            ></i>
+            <div>
+              <i
+                className="fa-solid fa-handshake"
+                onClick={() => {
+                  if (refModalAddFriend.current)
+                    refModalAddFriend.current.show();
+                }}
+              ></i>
+              <i
+                className="fa-solid fa-pen-to-square"
+                onClick={() => {
+                  if (refModalNewChat.current) refModalNewChat.current.show();
+                }}
+              ></i>
+            </div>
           </div>
         </div>
         <div className="room-group">
-          {listRoom?.map((item, idx) => (
+          {allMyFriend?.map((item, idx) => (
             <div key={idx} className="room-item" onClick={selectRoom(item)}>
               <div className="room-item-img">
                 <img src={getImg(item?.avatar)} />
               </div>
               <div className="room-item-content">
-                <div className="room-item-content-user">{item.name}</div>
+                <div className="room-item-content-user">
+                  {item.name || item.username}
+                </div>
                 <div className="room-item-content-message">
                   <span>
                     {item?.lastMessage?.fullName
@@ -177,14 +200,20 @@ const ChatContainer = ({
           className={`main-center-mid ${
             state.listFile?.length > 0 ? "main-center-mid-visible-file" : ""
           }`}
+          onScroll={(e) => {
+            if (e.target.scrollTop < 120 && !state.loading) {
+              setState({ loading: true, page: state.page + 1 });
+              getListMessage({ roomId: currentRoomId, page: state.page });
+            }
+          }}
         >
           <div id="id-content-chat-message" className="content-message">
             {listMessage.map((item, idx) => (
               <Message
                 key={idx}
-                data={item}
-                front={listMessage[idx - 1]?.fromId === item.fromId}
-                end={listMessage[idx + 1]?.fromId === item.fromId}
+                data={{ ...item, content: item.text }}
+                front={listMessage[idx - 1]?.fromUser === item.fromUser}
+                end={listMessage[idx + 1]?.fromUser === item.fromUser}
                 numberLike={listMessage[idx + 1]?.numberLike}
                 listMessage={listMessage}
               />
@@ -356,13 +385,25 @@ const ChatContainer = ({
         onSubmit={newChat}
         title="Hội thoại mới"
       />
+      <ModalAddMember
+        ref={refModalAddFriend}
+        onSubmit={onAddFriend}
+        title="Kết bạn"
+      />
     </WrapperStyled>
   );
 };
 
 export default connect(
   ({
-    socket: { currentRoomId, listRoom, listAllUser, listMessage, currentRoom },
+    socket: {
+      currentRoomId,
+      listRoom,
+      listAllUser,
+      listMessage,
+      currentRoom,
+      allMyFriend,
+    },
     auth: { auth },
   }) => ({
     auth,
@@ -371,6 +412,7 @@ export default connect(
     listRoom,
     listMessage,
     listAllUser,
+    allMyFriend,
   }),
   ({
     auth: { changeAvatar },
@@ -382,6 +424,8 @@ export default connect(
       getListMessage,
       updateData,
       addUsers,
+      addFriend,
+      myFiend,
     },
   }) => ({
     createRoom,
@@ -392,5 +436,7 @@ export default connect(
     sendMessage,
     changeAvatar,
     addUsers,
+    addFriend,
+    myFiend,
   })
 )(ChatContainer);

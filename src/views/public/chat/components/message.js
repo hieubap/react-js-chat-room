@@ -15,7 +15,7 @@ const Message = ({
   front,
   end,
   numberLike = 2,
-  auth,
+  auth = {},
   sendEmoji,
 }) => {
   const emojiIcon = useMemo(() => {
@@ -40,7 +40,7 @@ const Message = ({
           ? "content-message-item-end"
           : ""
       } ${
-        auth.userId === data.fromId
+        auth.username === data.createdBy
           ? "content-message-item-send"
           : "content-message-item-receive"
       } ${
@@ -48,8 +48,11 @@ const Message = ({
           ? "content-message-item-react"
           : ""
       }`}
+      onScroll={() => {
+        console.log("onscroll");
+      }}
     >
-      {auth.userId !== data.fromId && (
+      {auth.username !== data.createdBy && (
         <div className="main-center-top-img">
           {!end && <img src={getImg(data?.avatar)} />}
         </div>
@@ -57,7 +60,7 @@ const Message = ({
 
       <div className="wrapper-data">
         <div className={`user-name-send`}>
-          {auth.userId !== data.fromId && !front && data.fullName}
+          {auth.username !== data.createdBy && !front && data.fullName}
         </div>
         {data?.type === 2 ? (
           <div className="list-image">
@@ -82,7 +85,7 @@ const Message = ({
             {data?.listEmoji?.length > 0 && (
               <div
                 className={`react-message ${
-                  auth.userId === data.fromId ? "react-message-send" : ""
+                  auth.username === data.createdBy ? "react-message-send" : ""
                 }`}
               >
                 <div>
@@ -95,7 +98,7 @@ const Message = ({
             )}
             <div
               className={`react-message-option ${
-                auth.userId == data.fromId && "react-message-option-send"
+                auth.username == data.createdBy && "react-message-option-send"
               }`}
             >
               {listEmoji.map((item, key) => (
@@ -115,7 +118,7 @@ const Message = ({
 
         <div
           className={`list-last-seen ${
-            auth.userId === data.fromId && "list-last-seen-send"
+            auth.username === data.createdBy && "list-last-seen-send"
           } ${data?.listLastSeen?.length > 0 ? "list-last-seen-like" : ""}`}
         >
           {data?.listLastSeen?.map((item, idx) => (
@@ -137,6 +140,6 @@ const Message = ({
 };
 
 export default connect(
-  ({ auth: { auth } }) => ({ auth }),
+  ({ auth: { auth = {} } }) => ({ auth }),
   ({ socket: { sendEmoji } }) => ({ sendEmoji })
 )(Message);

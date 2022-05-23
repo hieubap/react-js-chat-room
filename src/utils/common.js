@@ -78,7 +78,7 @@ export const momentFromNow = (m) => {
 
 export const getImg = (avatar) => {
   return avatar
-    ? `${clientUtils.serverApi}/files/${avatar}`
+    ? `${clientUtils.serverApi}/auth-server/api/v1/file/download-file/${avatar}`
     : require("@assets/images/default.jpg").default;
 };
 

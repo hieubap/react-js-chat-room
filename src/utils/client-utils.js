@@ -10,8 +10,12 @@ export const UrlServer = () => {
   //   case "http://localhost:3000": // localhost
   //     return localhost ? "http://localhost:8880" : "http://45.13.132.247:8800";
   // }
-  return localhost ? "http://localhost:8800" : "http://45.13.132.247:8800";
+  return localhost ? "http://192.168.1.244:8000" : "http://45.13.132.247:8800";
 };
+
+export const pathAuthLogin =
+  UrlServer() +
+  "/chat-server/oauth2/authorize/hoang?redirect_uri=http://localhost:3000/oauth2/redirect";
 
 export default {
   auth: "",
@@ -54,7 +58,7 @@ export default {
         .catch((e) => {
           if (e && e.status === 401) {
             localStorage.clear();
-            window.location.reload();
+            // window.location.reload();
             // window.location.href = "/auth/login";
           }
           reject(e);
@@ -88,7 +92,7 @@ export default {
         methodType,
         url && url.indexOf("http") === 0 ? url : url,
         {
-          Authorization: this.auth,
+          // Authorization: this.auth,
         },
         form
       )

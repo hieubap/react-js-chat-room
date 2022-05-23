@@ -10,6 +10,7 @@ import fileProvider from "@src/data-access/file-provider";
 import { actionDevice, actionPublic, actionUser } from "./action";
 import clientUtils from "@src/utils/client-utils";
 import { getImg } from "@src/utils/common";
+import authProvider from "@src/data-access/auth-provider";
 // import { message } from "antd";
 
 const refTimeout = createRef();
@@ -38,11 +39,11 @@ export default {
       const { userId, deviceInfoId } = state.auth?.auth || {};
 
       function connect() {
-        socket = new SockJS("http://localhost:8800/ws"); // api/v1
+        socket = new SockJS("http://192.168.1.244:8085/chat-server/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
           {
-            token: clientUtils.token,
+            Authorization: "Bearer " + clientUtils.token,
           },
           stompSuccess,
           stompFailure
@@ -53,14 +54,18 @@ export default {
       const stompSuccess = (frame) => {
         console.log(frame, "frame");
         if (userId) {
-          stompClient.subscribe("/broker/public", actionPublic(dispatch));
-          stompClient.subscribe("/broker/user/" + userId, actionUser(dispatch));
-          stompClient.subscribe(
-            "/broker/device/" + deviceInfoId,
-            actionDevice(dispatch)
-          );
+          stompClient.subscribe("/user/queue/reply", (e) => {
+            const newMessage = JSON.parse(e.body);
+            dispatch.socket.updateMessage({ newMessage });
+          });
+          // stompClient.subscribe("/broker/public", actionPublic(dispatch));
+          // stompClient.subscribe("/broker/user/" + userId, actionUser(dispatch));
+          // stompClient.subscribe(
+          //   "/broker/device/" + deviceInfoId,
+          //   actionDevice(dispatch)
+          // );
 
-          stompClient.send("/app/list.room." + userId, {}, {});
+          // stompClient.send("/app/list.room." + userId, {}, {});
         }
       };
 
@@ -69,6 +74,24 @@ export default {
       }
 
       connect();
+    },
+    updateMessage: (
+      { newMessage },
+      { auth: { userId }, socket: { listMessage, currentRoomId } }
+    ) => {
+      if (
+        currentRoomId === newMessage.fromUser ||
+        currentRoomId === newMessage.toUser
+      ) {
+        dispatch.socket.updateData({
+          listMessage: [...listMessage, newMessage],
+          [`messageRoom${currentRoomId}`]: [...listMessage, newMessage],
+        });
+
+        setTimeout(() => {
+          dispatch.socket.scrollToBottom();
+        }, 100);
+      }
     },
     createRoom: (listUserId, { auth: { auth } }) => {
       return new Promise((resolve, reject) => {
@@ -88,10 +111,8 @@ export default {
       });
     },
     getAllUser: (_) => {
-      accountProvider.search({ page: 0, size: 99 }).then((res) => {
-        if (res && res.code === 0) {
-          dispatch.socket.updateData({ listAllUser: res.data });
-        }
+      accountProvider.getUser({ page: 0, size: 99 }).then((res) => {
+        dispatch.socket.updateData({ allUser: res });
       });
     },
     addUser: (userId, { socket: { currentRoomId } }) => {
@@ -155,7 +176,7 @@ export default {
       let addField = {};
       if (isAdmin) {
         addField = { currentRoom: listRoomMap[0], currentRoomId: newRoom?.id };
-        dispatch.socket.getListMessage(newRoom?.id);
+        dispatch.socket.getListMessage({ roomId: newRoom?.id });
       }
       dispatch.socket.updateData({
         listRoom: listRoomMap,
@@ -285,7 +306,7 @@ export default {
       });
     },
     getListMessage: (
-      roomId,
+      { roomId, page = 0, ignoreScroll } = {},
       {
         auth: { auth },
         socket: { currentRoomId, stompClient, listMessage, ...rest },
@@ -297,37 +318,58 @@ export default {
         });
         setTimeout(() => {
           dispatch.socket.scrollToBottom();
-          const listMess = rest[`messageRoom${roomId}`];
-          dispatch.socket.sendlastSeen({
-            messageId: listMess[listMess?.length - 1]?.id,
-            roomId: listMess[listMess?.length - 1]?.roomId,
-          });
         }, 100);
-      } else {
-        dispatch.socket.updateData({
-          [`messageRoom${roomId}`]: [],
-        });
-        messageProvider
-          .search({ roomId, sort: "createdAt,desc", size: 20 })
-          .then((res) => {
-            if (res && res.code === 0) {
-              if (roomId === currentRoomId) {
-                dispatch.socket.updateData({
-                  listMessage: res.data?.reverse(),
-                  [`messageRoom${roomId}`]: res.data,
-                });
-              } else
-                dispatch.socket.updateData({
-                  [`messageRoom${roomId}`]: res.data?.reverse(),
-                });
-              dispatch.socket.sendlastSeen({
-                messageId: res.data[res.data?.length - 1]?.id,
-                roomId: res.data[res.data?.length - 1]?.roomId,
-              });
-              dispatch.socket.scrollToBottom();
-            }
-          });
       }
+      stompClient.subscribe("/app/old.message/" + roomId, (e) => {
+        const listMessage = JSON.parse(e.body)?.body;
+        console.log(listMessage, "listMessage");
+        dispatch.socket.updateData({
+          listMessage,
+          [`messageRoom${roomId}`]: listMessage,
+        });
+      });
+      // return new Promise((resolve, reject) => {
+      //   if (rest[`messageRoom${roomId}`]) {
+      //     dispatch.socket.updateData({
+      //       listMessage: rest[`messageRoom${roomId}`],
+      //     });
+      //     setTimeout(() => {
+      //       dispatch.socket.scrollToBottom();
+      //       const listMess = rest[`messageRoom${roomId}`];
+      //       dispatch.socket.sendlastSeen({
+      //         messageId: listMess[listMess?.length - 1]?.id,
+      //         roomId: listMess[listMess?.length - 1]?.roomId,
+      //       });
+      //       resolve(listMess);
+      //     }, 100);
+      //   } else {
+      //     dispatch.socket.updateData({
+      //       [`messageRoom${roomId}`]: [],
+      //     });
+      //     messageProvider
+      //       .search({ roomId, sort: "createdAt,desc", page, size: 20 })
+      //       .then((res) => {
+      //         if (res && res.code === 0) {
+      //           if (roomId === currentRoomId) {
+      //             dispatch.socket.updateData({
+      //               listMessage: res.data?.reverse(),
+      //               [`messageRoom${roomId}`]: res.data,
+      //             });
+      //           } else
+      //             dispatch.socket.updateData({
+      //               [`messageRoom${roomId}`]: res.data?.reverse(),
+      //             });
+      //           dispatch.socket.sendlastSeen({
+      //             messageId: res.data[res.data?.length - 1]?.id,
+      //             roomId: res.data[res.data?.length - 1]?.roomId,
+      //           });
+      //           if (!ignoreScroll) dispatch.socket.scrollToBottom();
+
+      //           resolve(res.data);
+      //         }
+      //       });
+      //   }
+      // });
     },
     sendlastSeen: (
       { messageId, roomId },
@@ -357,10 +399,10 @@ export default {
         "/app/send.message",
         {},
         JSON.stringify({
-          fromId: auth?.userId,
-          roomId: currentRoomId,
-          content,
-          type,
+          fromUser: auth?.userId,
+          toUser: currentRoomId,
+          text: content,
+          chatType: "PERSONAL",
         })
       );
     },
@@ -375,6 +417,26 @@ export default {
           }
         })
         .finally(() => {});
+    },
+
+    ////////------------------
+    // kết bạn
+    addFriend: ({ listId }) => {
+      return new Promise((resolve, reject) => {
+        Promise.all(listId.map((i) => authProvider.addFiend(i)))
+          .then((res) => {
+            resolve(res);
+          })
+          .catch(reject);
+      });
+    },
+    myFiend: () => {
+      return new Promise((resolve, reject) => {
+        authProvider.myFriend().then((res) => {
+          dispatch.socket.updateData({ allMyFriend: res });
+          resolve(res);
+        });
+      });
     },
   }),
 };
