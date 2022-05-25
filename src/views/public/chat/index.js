@@ -36,8 +36,13 @@ const ChatContainer = ({
     getAllUser();
   }, []);
   const selectRoom = (room) => () => {
+    setState({ ignoreScroll: true });
     updateData({ currentRoomId: room?.id, currentRoom: room });
-    getListMessage(room?.id);
+    getListMessage({ roomId: room?.id }).then(() => {
+      setTimeout(() => {
+        setState({ ignoreScroll: false });
+      }, 1000);
+    });
   };
   const onPasteClipboard = (pasteEvent) => {
     var item = pasteEvent.clipboardData.items[0];
@@ -106,24 +111,20 @@ const ChatContainer = ({
     });
   };
 
-  const onScroll = (e, forceLoad) => {
+  const onScroll = (e) => {
     if (
       e.target.scrollTop < 100 &&
-      (!state.loading || forceLoad) &&
-      !currentRoom?.full
+      !state.loading &&
+      !currentRoom?.full &&
+      !state.ignoreScroll
     ) {
       setState({ loading: true });
       const scrollDiv = document.getElementById("id-content-chat-message");
       const from = scrollDiv.scrollHeight;
-      getListMessage({ loadMore: true }).then(() => {
+      console.log("scrolling ...");
+      getListMessage({ loadMore: true }).then(({}) => {
         e.target.scrollTo({ top: scrollDiv.scrollHeight - from - 50 });
-        setTimeout(() => {
-          if (e.target.scrollTop < 100) {
-            onScroll(e, true);
-          } else {
-            setState({ loading: false });
-          }
-        }, 1000);
+        setState({ loading: false });
       });
     }
   };
@@ -197,13 +198,7 @@ const ChatContainer = ({
           }`}
           onScroll={onScroll}
         >
-          <div
-            id="id-content-chat-message"
-            className="content-message"
-            onScroll={(e) => {
-              console.log("scroll Id ....");
-            }}
-          >
+          <div id="id-content-chat-message" className="content-message">
             {!currentRoom?.full && (
               <div className="content-message-loading">
                 LOADING

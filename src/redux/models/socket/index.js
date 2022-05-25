@@ -215,14 +215,26 @@ export default {
         })
       );
     },
-    scrollToBottom: () => {
+    scrollToBottom: (notAnimate) => {
       if (refTimeout.current) {
         clearTimeout(refTimeout.current);
       }
       refTimeout.current = setTimeout(() => {
-        document
-          .getElementById("id-content-chat-message")
-          ?.scrollIntoView({ block: "end", behavior: "smooth" });
+        document.getElementById("id-content-chat-message")?.scrollIntoView({
+          block: "end",
+          behavior: notAnimate ? "auto" : "smooth",
+        });
+      });
+    },
+    customRoom: ({ room }, state) => {
+      const { listRoom } = state.socket;
+      let newList = [...listRoom];
+
+      const indexRoom = newList.findIndex((item) => item.id === room.id);
+      newList.splice(indexRoom, 1, room);
+
+      dispatch.socket.updateData({
+        listRoom: newList,
       });
     },
     // lấy danh sách phòng khi kết nối
@@ -317,31 +329,39 @@ export default {
           currentRoomId,
           stompClient,
           listMessage = [],
+          listRoom = [],
           ...rest
         },
       }
     ) => {
       return new Promise((resolve) => {
         const customRoomId = roomId || currentRoomId;
-        if (customRoomId == currentRoomId && currentRoom.full) {
-          // nếu load hết tin nhắn cũ của phòng hiện tại thì stop
-          resolve();
-          return;
-        }
-        if (rest[`messageRoom${customRoomId}`] && !loadMore) {
+
+        if (
+          rest[`messageRoom${customRoomId}`] &&
+          (!loadMore || (customRoomId == currentRoomId && currentRoom.full))
+        ) {
           // chọn phòng khác
+          // nếu load hết tin nhắn cũ của phòng hiện tại thì stop
           dispatch.socket.updateData({
             listMessage: rest[`messageRoom${customRoomId}`],
           });
-          setTimeout(() => {
-            dispatch.socket.scrollToBottom();
+          console.log("active...", currentRoom);
+          const eventScroll = (notAnimate) => {
+            dispatch.socket.scrollToBottom(notAnimate);
             const listMess = rest[`messageRoom${customRoomId}`];
             dispatch.socket.sendlastSeen({
               messageId: listMess[listMess?.length - 1]?.id,
               roomId: listMess[listMess?.length - 1]?.roomId,
             });
-          }, 100);
-          resolve();
+          };
+          if (currentRoom.full) {
+            eventScroll(true);
+          } else {
+            setTimeout(eventScroll, 100);
+          }
+
+          resolve({});
         } else {
           // loadmore phòng hiện tại
           // lấy old message khi kết nối
@@ -358,23 +378,33 @@ export default {
                 if (customRoomId === currentRoomId) {
                   dispatch.socket.updateData({
                     listMessage: [...res.data?.reverse(), ...listMessage],
-                    [`messageRoom${roomId}`]: [...res.data, ...listMessage],
+                    [`messageRoom${customRoomId}`]: [
+                      ...res.data,
+                      ...listMessage,
+                    ],
                   });
-                } else
+                } else {
                   dispatch.socket.updateData({
-                    [`messageRoom${roomId}`]: res.data?.reverse(),
-                  });
-                if (loadMore) {
-                  dispatch.socket.updateData({
-                    [`messageRoom${customRoomId}`]: [],
-                    currentRoom: {
-                      ...currentRoom,
-                      page,
-                      full: res.data?.length === 0,
-                    },
+                    [`messageRoom${customRoomId}`]: res.data?.reverse(),
                   });
                 }
-                resolve();
+
+                const customRoom = {
+                  ...listRoom.find((i) => i.id === customRoomId),
+                  page,
+                  full: res.data?.length < 20,
+                };
+                dispatch.socket.customRoom({
+                  room: customRoom,
+                });
+
+                if (loadMore) {
+                  dispatch.socket.updateData({
+                    currentRoom: customRoom,
+                  });
+                }
+                resolve({});
+
                 // if (page === 0) {
                 //   dispatch.socket.sendlastSeen({
                 //     messageId: res.data[res.data?.length - 1]?.id,

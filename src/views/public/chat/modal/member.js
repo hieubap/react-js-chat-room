@@ -95,13 +95,14 @@ const ModalMember = (
                   .toLowerCase()
                   ?.indexOf(state.searchText?.toLowerCase()) !== -1
             )
-            .map((item) => (
-              <div className="member-item">
+            .map((item, key) => (
+              <div key={key} className="member-item">
                 <Avatar src={getImg(item.avatar)} name={item.fullName}></Avatar>
                 <input
                   type="checkbox"
                   checked={state.listSelect.some((i) => i.id === item.id)}
                   onClick={clickCheckbox(item)}
+                  onChange={() => {}}
                 />
               </div>
             ))}
