@@ -18,6 +18,7 @@ const refReconnect = createRef();
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   state: {
+    isConnect: false,
     stompClient: null,
 
     listRoom: [],
@@ -34,6 +35,12 @@ export default {
   },
   effects: (dispatch) => ({
     connect: ({ reconnect } = {}, state) => {
+      if (state.socket.isConnect) {
+        return;
+      }
+      dispatch.socket.updateData({
+        isConnect: true,
+      });
       var stompClient = null;
       var socket = null;
       const { userId, deviceInfoId } = state.auth?.auth || {};
@@ -72,6 +79,11 @@ export default {
       };
 
       function stompFailure(error) {
+        if (state.socket.isConnect) {
+          dispatch.socket.updateData({
+            isConnect: false,
+          });
+        }
         if (!refReconnect.current) {
           refReconnect.current = setInterval(() => {
             dispatch.socket.connect({ reconnect: true });

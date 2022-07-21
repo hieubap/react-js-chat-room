@@ -492,7 +492,7 @@ export const WrapperStyled = styled.div`
       }
     }
     &-body {
-      height: calc(100% - 140px);
+      height: calc(100% - 165px);
       overflow-y: scroll;
       .collapse-tool {
         &-title {
