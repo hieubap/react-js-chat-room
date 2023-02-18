@@ -8,7 +8,7 @@ import Stomp from "stomp-websocket";
 import { createRef } from "react";
 import fileProvider from "@src/data-access/file-provider";
 import { actionDevice, actionPublic, actionUser } from "./action";
-import clientUtils from "@src/utils/client-utils";
+import clientUtils, { UrlServer } from "@src/utils/client-utils";
 import { getImg } from "@src/utils/common";
 // import { message } from "antd";
 
@@ -46,7 +46,7 @@ export default {
       const { userId, deviceInfoId } = state.auth?.auth || {};
 
       function connect() {
-        socket = new SockJS("http://localhost:8800/ws"); // api/v1
+        socket = new SockJS(UrlServer() + "/ws"); // api/v1
         stompClient = Stomp.over(socket);
         stompClient.connect(
           {

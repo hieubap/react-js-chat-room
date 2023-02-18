@@ -28,6 +28,9 @@ export const WrapperStyled = styled.div`
             width: 100%;
           }
         }
+        &-description {
+          text-align: center;
+        }
         :hover {
           transform: scale(1.1);
           /* box-shadow: 0 0px 10px var(--blue); */

@@ -2,28 +2,41 @@ import { plantVsZombie } from "@src/assets/images/base64";
 import Rate from "@src/components/Rate";
 import React from "react";
 import { WrapperStyled } from "./styled";
+import { UrlServer } from "@src/utils/client-utils";
 
+const data2 = [
+  {
+    title: "Chating app",
+    link: "/files/documents/store/chating.apk",
+    img: require("@assets/images/chat_messages.png").default
+  },
+  {
+    title: "Studemy app",
+    link: "/files/documents/store/studemy.apk",
+    img: require("@assets/images/studemy_icon.webp").default
+  },
+];
 const data = [
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
   {
-    title: "Chat app",
+    title: "Diamond Rush",
   },
 ];
 
@@ -35,7 +48,11 @@ const App = (props) => {
         <div className="group-list">
           {data.map((item) => (
             <a
-              href={require("@assets/DiamondRush.apk").default}
+              href={
+                item.link
+                  ? UrlServer() + item.link
+                  : require("@assets/DiamondRush.apk").default
+              }
               className="item-app"
               download={"Diamond Rush.apk"}
               onClick={() => {
@@ -47,7 +64,7 @@ const App = (props) => {
               }}
             >
               <div className="item-app-image">
-                <img src={plantVsZombie} />
+                <img src={item.img ? item.img : plantVsZombie} />
               </div>
               <div className="item-app-description">
                 <Rate margin={2} fontSize={12} value={Math.random() * 5}></Rate>
@@ -61,7 +78,7 @@ const App = (props) => {
   };
   return (
     <WrapperStyled>
-      {renderGroup({ title: "App hiện có", data })}
+      {renderGroup({ title: "App hiện có", data: data2 })}
       {renderGroup({ title: "Giải trí", data })}
       {renderGroup({ title: "Tiện ích", data })}
       {renderGroup({ title: "Game", data })}

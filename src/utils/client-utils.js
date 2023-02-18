@@ -10,7 +10,8 @@ export const UrlServer = () => {
   //   case "http://localhost:3000": // localhost
   //     return localhost ? "http://localhost:8880" : "http://45.13.132.247:8800";
   // }
-  return localhost ? "http://localhost:8800" : "http://45.13.132.247:8800";
+  // return localhost ? "http://192.168.1.8:8801" : "http://45.13.132.247:8800";
+  return "http://14.225.205.222:8801";
 };
 
 export default {
